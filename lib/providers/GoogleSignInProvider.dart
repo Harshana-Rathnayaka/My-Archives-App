@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:my_archive/services/UserService.dart';
 
 class GoogleSignInProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
@@ -48,7 +47,7 @@ class GoogleSignInProvider extends ChangeNotifier {
       print(loggedInUser.displayName);
       print(loggedInUser.email);
 
-// adding the user details to the users collection after login
+      // adding the user details to the users collection after login
       addUser(uid: loggedInUser.uid, userData: {
         "uid": loggedInUser.uid,
         "name": loggedInUser.displayName,
@@ -65,7 +64,7 @@ class GoogleSignInProvider extends ChangeNotifier {
     }
   }
 
-// logout method
+  // logout method
   void logout() async {
     await googleSignIn.disconnect();
     firebaseInstance.signOut();

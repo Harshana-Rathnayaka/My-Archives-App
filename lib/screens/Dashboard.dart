@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:my_archive/constants/fonts.dart';
 import 'package:my_archive/constants/images.dart';
-import 'package:my_archive/services/UserService.dart';
 import 'package:my_archive/widgets/CustomDrawer.dart';
 
 class Dashboard extends StatefulWidget {
