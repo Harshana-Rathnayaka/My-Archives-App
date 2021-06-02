@@ -1,13 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:my_archive/components/theme.dart';
-import 'package:my_archive/providers/google_signin_provider.dart';
-import 'package:my_archive/screens/dashboard.dart';
-import 'package:my_archive/screens/login.dart';
-import 'package:provider/provider.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 
 import 'components/connectivity_status.dart';
+import 'components/theme.dart';
+import 'providers/google_signin_provider.dart';
+import 'screens/dashboard.dart';
+import 'screens/login.dart';
+import 'screens/watchlist.dart';
 import 'services/connectivity_service.dart';
 
 Future main() async {
@@ -58,6 +60,7 @@ class MyApp extends StatelessWidget {
             routes: <String, WidgetBuilder>{
               Login.tag: (BuildContext context) => Login(),
               Dashboard.tag: (BuildContext context) => Dashboard(),
+              Watchlist.tag: (BuildContext context) => Watchlist(),
             },
           );
         }),

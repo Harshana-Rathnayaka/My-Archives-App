@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:my_archive/constants/fonts.dart';
-import 'package:my_archive/constants/images.dart';
-import 'package:my_archive/widgets/custom_drawer.dart';
+
+import '../constants/images.dart';
+import '../screens/watchlist.dart';
+import '../utils/helper_methods.dart';
+import '../widgets/custom_drawer.dart';
+import '../widgets/dashboard_card.dart';
+import '../widgets/helper_widgets.dart';
 
 class Dashboard extends StatefulWidget {
   static var tag = "/Dashboard";
@@ -18,19 +21,10 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            'My Archives',
-            style: TextStyle(
-                fontFamily: fontRegular,
-                letterSpacing: 1.0,
-                wordSpacing: 1.0,
-                fontWeight: FontWeight.bold),
-          ),
+          title: AppBarTitle(title: 'My Archives'),
           centerTitle: true,
         ),
         drawer: CustomDrawer(),
@@ -43,93 +37,31 @@ class _DashboardState extends State<Dashboard> {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2),
                 children: [
-                  Card(
-                    elevation: 10,
-                    child: Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            movies,
-                            color: Theme.of(context).accentColor,
-                            width: 40,
-                            height: 40,
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'MOVIES',
-                            style: TextStyle(
-                                letterSpacing: 1.0,
-                                fontFamily: fontRegular,
-                                fontSize: textSizeLargeMedium),
-                          )
-                        ],
-                      ),
-                    ),
+                  DashboardCard(
+                    isIcon: false,
+                    displayIcon: movies,
+                    title: 'MOVIES',
+                    onPressed: () {},
                   ),
-                  Card(
-                    elevation: 10,
-                    child: Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.tv,
-                              color: Theme.of(context).accentColor, size: 40),
-                          SizedBox(height: 10),
-                          Text(
-                            'TV SERIES',
-                            style: TextStyle(
-                                letterSpacing: 1.0,
-                                fontFamily: fontRegular,
-                                fontSize: textSizeLargeMedium),
-                          )
-                        ],
-                      ),
-                    ),
+                  DashboardCard(
+                    isIcon: true,
+                    displayIcon: Icons.tv,
+                    title: 'TV SERIES',
+                    onPressed: () {},
                   ),
-                  Card(
-                    elevation: 10,
-                    child: Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.bookmark,
-                              color: Theme.of(context).accentColor, size: 40),
-                          SizedBox(height: 10),
-                          Text(
-                            'WATCHLIST',
-                            style: TextStyle(
-                                letterSpacing: 1.0,
-                                fontFamily: fontRegular,
-                                fontSize: textSizeLargeMedium),
-                          )
-                        ],
-                      ),
-                    ),
+                  DashboardCard(
+                    isIcon: true,
+                    displayIcon: Icons.bookmark,
+                    title: 'WATCHLIST',
+                    onPressed: () {
+                      launchScreen(context, Watchlist.tag);
+                    },
                   ),
-                  Card(
-                    elevation: 10,
-                    child: Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.location_pin,
-                              color: Theme.of(context).accentColor, size: 40),
-                          SizedBox(height: 10),
-                          Text(
-                            'PLACES',
-                            style: TextStyle(
-                                letterSpacing: 1.0,
-                                fontFamily: fontRegular,
-                                fontSize: textSizeLargeMedium),
-                          )
-                        ],
-                      ),
-                    ),
+                  DashboardCard(
+                    isIcon: true,
+                    displayIcon: Icons.location_pin,
+                    title: 'PLACES',
+                    onPressed: () {},
                   ),
                 ],
               ),

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:my_archive/utils/helper_methods.dart';
 import 'package:provider/provider.dart';
 
-import 'package:my_archive/components/connectivity_status.dart';
-import 'package:my_archive/constants/fonts.dart';
-import 'package:my_archive/constants/images.dart';
-import 'package:my_archive/providers/google_signin_provider.dart';
+import '../components/connectivity_status.dart';
+import '../constants/colors.dart';
+import '../constants/fonts.dart';
+import '../constants/images.dart';
+import '../providers/google_signin_provider.dart';
+import '../utils/helper_methods.dart';
 
 class Login extends StatefulWidget {
   static var tag = "/Login";
@@ -48,7 +49,7 @@ class _LoginState extends State<Login> {
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(customSnackbar(
                       icon: Icons.cloud_off,
-                      iconColor: Colors.red,
+                      iconColor: colorRed,
                       text: 'No internet connection!'));
                 }
               },
