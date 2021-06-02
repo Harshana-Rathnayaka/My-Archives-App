@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_archive/constants/fonts.dart';
 
 launchScreen(context, String tag, {Object arguments}) {
   if (arguments == null) {
@@ -27,6 +28,26 @@ back(var context) {
 
 void hideKeyboard(context) {
   FocusScope.of(context).requestFocus(FocusNode());
+}
+
+SnackBar customSnackbar({
+  @required IconData icon,
+  @required Color iconColor,
+  @required String text,
+}) {
+  return SnackBar(
+    content: Row(
+      children: [
+        Icon(icon, color: iconColor),
+        SizedBox(width: 12),
+        Text(
+          text,
+          style: const TextStyle(
+              fontFamily: fontRegular, fontWeight: FontWeight.bold),
+        )
+      ],
+    ),
+  );
 }
 
 // void showToast({@required String msg, @required Color backGroundColor}) =>
