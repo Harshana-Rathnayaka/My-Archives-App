@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:my_archive/constants/fonts.dart';
+
+import 'package:fluttertoast/fluttertoast.dart';
+
+import '../constants/colors.dart';
+import '../constants/fonts.dart';
 
 launchScreen(context, String tag, {Object arguments}) {
   if (arguments == null) {
@@ -50,9 +54,9 @@ SnackBar customSnackbar({
   );
 }
 
-// void showToast({@required String msg, @required Color backGroundColor}) =>
-//     Fluttertoast.showToast(
-//         msg: msg,
-//         textColor: colorWhite,
-//         backgroundColor: backGroundColor,
-//         toastLength: Toast.LENGTH_LONG);
+void showToast({@required String msg, @required Color backGroundColor}) =>
+    Fluttertoast.showToast(
+        msg: msg,
+        textColor: colorWhite,
+        backgroundColor: backGroundColor,
+        toastLength: Toast.LENGTH_LONG);
