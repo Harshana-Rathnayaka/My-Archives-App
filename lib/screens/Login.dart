@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:my_archive/constants/fonts.dart';
 import 'package:my_archive/constants/images.dart';
-import 'package:my_archive/providers/GoogleSignInProvider.dart';
+import 'package:my_archive/providers/google_signin_provider.dart';
 import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {

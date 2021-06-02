@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_archive/components/theme.dart';
-import 'package:my_archive/providers/GoogleSignInProvider.dart';
-import 'package:my_archive/screens/Dashboard.dart';
-import 'package:my_archive/screens/Login.dart';
+import 'package:my_archive/providers/google_signin_provider.dart';
+import 'package:my_archive/screens/dashboard.dart';
+import 'package:my_archive/screens/login.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
