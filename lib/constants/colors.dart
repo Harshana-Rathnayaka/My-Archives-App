@@ -5,8 +5,8 @@ const lightAppBarColor = Color(0xFF008080);
 const lightScaffoldColor = Color(0xFF48a999);
 const colorWhite = Color(0xFFE7F2F8);
 const colorRed = Color(0xFFDE3C4B);
-const colorGreen = Color(0xFF00C22A);
-const colorBlack = Color(0xFF000000);
+const colorGreen = Color(0xFF1D8C34);
+const colorBlack = Color(0xDD000000);
 
 // colors for the dark mode switch GitHub style
 const activeToggleColor = Color(0xFF6E40C9);
