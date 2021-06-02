@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../constants/images.dart';
 import '../screens/watchlist.dart';
 import '../utils/helper_methods.dart';
 import '../widgets/custom_drawer.dart';
@@ -38,19 +37,16 @@ class _DashboardState extends State<Dashboard> {
                     crossAxisCount: 2),
                 children: [
                   DashboardCard(
-                    isIcon: false,
-                    displayIcon: movies,
+                    displayIcon: Icons.movie_outlined,
                     title: 'MOVIES',
                     onPressed: () {},
                   ),
                   DashboardCard(
-                    isIcon: true,
-                    displayIcon: Icons.tv,
+                    displayIcon: Icons.live_tv,
                     title: 'TV SERIES',
                     onPressed: () {},
                   ),
                   DashboardCard(
-                    isIcon: true,
                     displayIcon: Icons.bookmark,
                     title: 'WATCHLIST',
                     onPressed: () {
@@ -58,7 +54,6 @@ class _DashboardState extends State<Dashboard> {
                     },
                   ),
                   DashboardCard(
-                    isIcon: true,
                     displayIcon: Icons.location_pin,
                     title: 'PLACES',
                     onPressed: () {},
