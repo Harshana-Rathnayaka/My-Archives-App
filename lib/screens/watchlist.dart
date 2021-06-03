@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,10 +26,14 @@ class Watchlist extends StatefulWidget {
 class _WatchlistState extends State<Watchlist> {
   TextEditingController _tvSeriesController = TextEditingController();
   TextEditingController _moviesController = TextEditingController();
+
   final user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
+    final _stream =
+        FirebaseFirestore.instance.collection('watchlist').doc(user.uid).get();
+
     return DefaultTabController(
       length: 2,
       child: SafeArea(
@@ -47,8 +54,95 @@ class _WatchlistState extends State<Watchlist> {
             ),
           ),
           body: TabBarView(children: [
-            Center(child: Text('Movies')),
-            Center(child: Text('Tv Series')),
+            FutureBuilder<DocumentSnapshot>(
+              future: _stream,
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      "Something went wrong",
+                      style: TextStyle(fontFamily: fontRegular),
+                    ),
+                  );
+                }
+
+                if (snapshot.hasData && !snapshot.data.exists) {
+                  return Center(
+                    child: Text(
+                      "Document does not exist",
+                      style: TextStyle(fontFamily: fontRegular),
+                    ),
+                  );
+                }
+
+                if (snapshot.connectionState == ConnectionState.done) {
+                  Map<String, dynamic> data = snapshot.data.data();
+                  return data['movies'] != null
+                      ? ListView.builder(
+                          itemCount: data['movies'].length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(data['movies'][index]),
+                            );
+                          },
+                        )
+                      : Center(
+                          child: Text(
+                            'No data available',
+                            style: TextStyle(fontFamily: fontRegular),
+                          ),
+                        );
+                }
+
+                return Center(child: CircularProgressIndicator());
+              },
+            ),
+            FutureBuilder<DocumentSnapshot>(
+              future: _stream,
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      "Something went wrong",
+                      style: TextStyle(fontFamily: fontRegular),
+                    ),
+                  );
+                }
+
+                if (snapshot.hasData && !snapshot.data.exists) {
+                  return Center(
+                    child: Text(
+                      "Document does not exist",
+                      style: TextStyle(fontFamily: fontRegular),
+                    ),
+                  );
+                }
+
+                if (snapshot.connectionState == ConnectionState.done) {
+                  Map<String, dynamic> data = snapshot.data.data();
+                  return data['tvSeries'] != null
+                      ? ListView.builder(
+                          itemCount: data['tvSeries'].length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(data['tvSeries'][index]),
+                            );
+                          },
+                        )
+                      : Center(
+                          child: Text(
+                            'No data available',
+                            style: TextStyle(fontFamily: fontRegular),
+                          ),
+                        );
+                  ;
+                }
+
+                return Center(child: CircularProgressIndicator());
+              },
+            ),
           ]),
           floatingActionButton: Consumer<ThemeNotifier>(
             builder: (context, notifier, child) => SpeedDial(
@@ -68,6 +162,7 @@ class _WatchlistState extends State<Watchlist> {
                   label: 'Add a Tv Series',
                   closeSpeedDialOnPressed: true,
                   onPressed: () {
+                    // WatchlistService(uid: user.uid).checkIfExists();
                     showDialog(
                         context: context,
                         builder: (context) => CustomDialog(
@@ -85,6 +180,11 @@ class _WatchlistState extends State<Watchlist> {
                                 },
                                 onChanged: (val) {
                                   //  check if already exists
+                                  // WatchlistService(uid: user.uid)
+                                  //     .checkIfExists()
+                                  //     .then((value) {
+                                  //   print('value $value');
+                                  // });
                                 },
                               ),
                               onSave: () {

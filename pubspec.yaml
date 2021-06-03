@@ -35,6 +35,7 @@ dependencies:
   fluttertoast: ^8.0.7
   google_sign_in: ^5.0.4
   provider: ^5.0.0
+  rxdart: ^0.27.1
   shared_preferences: ^2.0.6
   simple_speed_dial: ^0.1.3
 
