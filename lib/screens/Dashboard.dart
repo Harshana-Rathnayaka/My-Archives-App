@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../screens/watchlist.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../utils/helper_methods.dart';
 import '../widgets/custom_drawer.dart';
 import '../widgets/dashboard_card.dart';
 import '../widgets/helper_widgets.dart';
+import 'watched_movies.dart';
+import 'watchlist.dart';
 
 class Dashboard extends StatefulWidget {
   static var tag = "/Dashboard";
@@ -17,6 +20,8 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
   }
+
+  final user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +44,9 @@ class _DashboardState extends State<Dashboard> {
                   DashboardCard(
                     displayIcon: Icons.movie_outlined,
                     title: 'MOVIES',
-                    onPressed: () {},
+                    onPressed: () {
+                      launchScreen(context, WatchedMovies.tag);
+                    },
                   ),
                   DashboardCard(
                     displayIcon: Icons.live_tv,
