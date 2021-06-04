@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_speed_dial/simple_speed_dial.dart';
@@ -137,7 +137,6 @@ class _WatchlistState extends State<Watchlist> {
                             style: TextStyle(fontFamily: fontRegular),
                           ),
                         );
-                  ;
                 }
 
                 return Center(child: CircularProgressIndicator());
