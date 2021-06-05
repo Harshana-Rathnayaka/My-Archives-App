@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_svg/svg.dart';
-
 import '../constants/fonts.dart';
-import '../constants/images.dart';
+import 'custom_no_records.dart';
 
 class Search extends SearchDelegate {
   final List itemList;
@@ -83,18 +81,6 @@ class Search extends SearchDelegate {
                 ),
               );
             })
-        : Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset(empty, height: 80),
-              Center(
-                child: Text(
-                  'No records found',
-                  style: TextStyle(
-                      fontFamily: fontRegular, fontSize: textSizeMedium),
-                ),
-              ),
-            ],
-          );
+        : CustomNoRecords(text: 'No records found');
   }
 }
