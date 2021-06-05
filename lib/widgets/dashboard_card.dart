@@ -24,7 +24,13 @@ class DashboardCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(displayIcon, color: Theme.of(context).accentColor, size: 40),
+              Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).accentColor.withOpacity(0.2)),
+                  child: Icon(displayIcon,
+                      color: Theme.of(context).accentColor, size: 28)),
               SizedBox(height: 10),
               Text(
                 title,
