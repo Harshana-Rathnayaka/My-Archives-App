@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:my_archive/constants/colors.dart';
+import 'package:my_archive/services/movie_service.dart';
+import 'package:my_archive/utils/helper_methods.dart';
+import 'package:my_archive/widgets/custom_dialog.dart';
+import 'package:my_archive/widgets/custom_textfield.dart';
 
 import '../constants/fonts.dart';
 import '../widgets/helper_widgets.dart';
@@ -16,21 +19,22 @@ class WatchedMovies extends StatefulWidget {
 class _WatchedMoviesState extends State<WatchedMovies> {
   final user = FirebaseAuth.instance.currentUser;
   List movies = [];
+  List movieNames = [];
   List dropDownList = [
     'Sort by Year ASC',
     'Sort by Year DESC',
     'Sort by Name ASC',
     'Sort by Name DESC'
   ];
+  bool isMovieExist = false;
+  String yearCheck;
   String dropDownValue = 'Sort by Name ASC';
+
+  TextEditingController _movieNameController = TextEditingController();
+  TextEditingController _movieYearController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final _stream = FirebaseFirestore.instance
-        .collection('watchedMovies')
-        .doc(user.uid)
-        .snapshots();
-
     return SafeArea(
       child: (Scaffold(
         appBar: AppBar(
@@ -38,7 +42,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
           centerTitle: true,
         ),
         body: StreamBuilder(
-            stream: _stream,
+            stream: WatchedMovieService(uid: user.uid).getWatchedMoviesStream(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(
@@ -57,6 +61,11 @@ class _WatchedMoviesState extends State<WatchedMovies> {
               movies = snapshot.data['movies'];
 
               sortList();
+
+              // getting the movie list to another variable to check if it exists
+              movies.forEach((element) {
+                movieNames.add(element['name'].toLowerCase());
+              });
 
               return Column(
                 children: [
@@ -168,9 +177,114 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                 ],
               );
             }),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: null,
-        // ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (context) => StatefulBuilder(
+                      builder: (context, StateSetter setState) => CustomDialog(
+                        heading: 'Add to your watched movies',
+                        child: Column(
+                          children: [
+                            CustomTextField(
+                              controller: _movieNameController,
+                              hint: 'Name of the Movie',
+                              icon: Icons.movie_outlined,
+                              validation: (val) {
+                                String newVal = val.trim();
+                                if (newVal.isEmpty) {
+                                  return 'Name of the Movie is required';
+                                }
+                                return null;
+                              },
+                              onChanged: (val) {
+                                setState(() {
+                                  isMovieExist =
+                                      checkifExist(val.trim().toLowerCase());
+                                });
+                              },
+                            ),
+                            isMovieExist
+                                ? Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      'This movie already exists in the database',
+                                      style: TextStyle(
+                                          color: Theme.of(context).errorColor,
+                                          fontFamily: fontMedium,
+                                          fontSize: textSizeSmall),
+                                    ),
+                                  )
+                                : Container(),
+                            SizedBox(height: 16.0),
+                            CustomTextField(
+                              controller: _movieYearController,
+                              hint: 'Year',
+                              icon: Icons.date_range,
+                              isNumber: true,
+                              maxLength: 4,
+                              validation: (val) {
+                                String newVal = val.trim();
+                                if (newVal.isEmpty) {
+                                  return 'Year is required';
+                                }
+                                return null;
+                              },
+                              onChanged: (val) {
+                                if (val.trim().isNotEmpty) {
+                                  setState(() {
+                                    yearCheck = checkYear(val.trim());
+                                  });
+                                } else if (val.trim().isEmpty) {
+                                  setState(() {
+                                    yearCheck = null;
+                                  });
+                                }
+                              },
+                            ),
+                            yearCheck != null
+                                ? Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      yearCheck,
+                                      style: TextStyle(
+                                          color: Theme.of(context).errorColor,
+                                          fontFamily: fontRegular,
+                                          fontSize: textSizeSmall),
+                                    ),
+                                  )
+                                : Container()
+                          ],
+                        ),
+                        onSave: () {
+                          WatchedMovieService(uid: user.uid)
+                              .addWatchedMovies()
+                              .then((value) {
+                            showToast(
+                                msg: 'Record saved successfully!',
+                                backGroundColor: colorGreen);
+                            isMovieExist = false;
+                            yearCheck = '';
+                            _movieNameController.clear();
+                            _movieYearController.clear();
+                          }).onError((error, stackTrace) {
+                            print(error);
+                            print(stackTrace);
+                            showToast(
+                                msg: 'Something went wrong! Error - $error',
+                                backGroundColor: colorRed);
+                          });
+                        },
+                      ),
+                    )).whenComplete(() {
+              isMovieExist = false;
+              yearCheck = '';
+              _movieNameController.clear();
+              _movieYearController.clear();
+            });
+          },
+        ),
       )),
     );
   }
@@ -196,5 +310,25 @@ class _WatchedMoviesState extends State<WatchedMovies> {
     }
 
     return movies;
+  }
+
+  // check if the movie exists
+  bool checkifExist(val) {
+    if (movieNames.contains(val)) {
+      return true;
+    }
+    return false;
+  }
+
+  // check if the year is correct and between range
+  String checkYear(value) {
+    int year = int.parse(value);
+
+    if (year < 1900) {
+      return 'Year cannot be less than 1900';
+    } else if (year > 2200) {
+      return 'Year cannot be greater than 2200';
+    }
+    return null;
   }
 }
