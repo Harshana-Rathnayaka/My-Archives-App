@@ -8,6 +8,7 @@ import '../services/movie_service.dart';
 import '../utils/helper_methods.dart';
 import '../widgets/custom_dialog.dart';
 import '../widgets/custom_delete_dialog.dart';
+import '../widgets/custom_no_records.dart';
 import '../widgets/custom_textfield.dart';
 import '../widgets/helper_widgets.dart';
 import '../widgets/search.dart';
@@ -273,12 +274,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                                 );
                               },
                             ))
-                        : Center(
-                            child: Text(
-                              'No data available',
-                              style: TextStyle(fontFamily: fontMedium),
-                            ),
-                          ),
+                        : CustomNoRecords(text: 'No data available'),
                   ),
                 ],
               );

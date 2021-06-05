@@ -13,6 +13,7 @@ import '../constants/fonts.dart';
 import '../services/watchlist_service.dart';
 import '../utils/helper_methods.dart';
 import '../widgets/custom_dialog.dart';
+import '../widgets/custom_no_records.dart';
 import '../widgets/custom_textfield.dart';
 import '../widgets/helper_widgets.dart';
 
@@ -81,12 +82,7 @@ class _WatchlistState extends State<Watchlist> {
                 }
 
                 if (snapshot.hasData && !snapshot.data.exists) {
-                  return Center(
-                    child: Text(
-                      "Document does not exist",
-                      style: TextStyle(fontFamily: fontRegular),
-                    ),
-                  );
+                  return CustomNoRecords(text: 'Document does not exist');
                 }
 
                 if (snapshot.connectionState == ConnectionState.done) {
@@ -105,12 +101,7 @@ class _WatchlistState extends State<Watchlist> {
                             },
                           ),
                         )
-                      : Center(
-                          child: Text(
-                            'No data available',
-                            style: TextStyle(fontFamily: fontRegular),
-                          ),
-                        );
+                      : CustomNoRecords(text: 'No data available');
                 }
 
                 return Center(child: CircularProgressIndicator());
@@ -130,12 +121,7 @@ class _WatchlistState extends State<Watchlist> {
                 }
 
                 if (snapshot.hasData && !snapshot.data.exists) {
-                  return Center(
-                    child: Text(
-                      "Document does not exist",
-                      style: TextStyle(fontFamily: fontRegular),
-                    ),
-                  );
+                  return CustomNoRecords(text: 'Document does not exist');
                 }
 
                 if (snapshot.connectionState == ConnectionState.done) {
@@ -154,12 +140,7 @@ class _WatchlistState extends State<Watchlist> {
                             },
                           ),
                         )
-                      : Center(
-                          child: Text(
-                            'No data available',
-                            style: TextStyle(fontFamily: fontRegular),
-                          ),
-                        );
+                      : CustomNoRecords(text: 'No data available');
                 }
 
                 return Center(child: CircularProgressIndicator());
