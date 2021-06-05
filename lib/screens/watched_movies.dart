@@ -10,6 +10,7 @@ import '../widgets/custom_dialog.dart';
 import '../widgets/custom_delete_dialog.dart';
 import '../widgets/custom_textfield.dart';
 import '../widgets/helper_widgets.dart';
+import '../widgets/search.dart';
 
 class WatchedMovies extends StatefulWidget {
   static var tag = "/WatchedMovies";
@@ -43,6 +44,14 @@ class _WatchedMoviesState extends State<WatchedMovies> {
         appBar: AppBar(
           title: AppBarTitle(title: 'Watched Movies'),
           centerTitle: true,
+          actions: [
+            IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  showSearch(
+                      context: context, delegate: Search(itemList: movies));
+                }),
+          ],
         ),
         body: StreamBuilder(
             stream: WatchedMovieService(uid: user.uid).getWatchedMoviesStream(),
