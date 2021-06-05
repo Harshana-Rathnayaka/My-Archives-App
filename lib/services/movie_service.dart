@@ -8,6 +8,14 @@ class WatchedMovieService {
   final movieCollection =
       FirebaseFirestore.instance.collection('watchedMovies');
 
+// getting the watched movies collection
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getWatchedMoviesStream() {
+    return FirebaseFirestore.instance
+        .collection('watchedMovies')
+        .doc(uid)
+        .snapshots();
+  }
+
 // add to watched movies collection
   Future addWatchedMovies({List<Map<String, dynamic>> data}) async {
     print('adding');

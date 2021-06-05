@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:my_archive/constants/colors.dart';
-import 'package:my_archive/services/movie_service.dart';
-import 'package:my_archive/utils/helper_methods.dart';
-import 'package:my_archive/widgets/custom_dialog.dart';
-import 'package:my_archive/widgets/custom_textfield.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../constants/colors.dart';
 import '../constants/fonts.dart';
+import '../services/movie_service.dart';
+import '../utils/helper_methods.dart';
+import '../widgets/custom_dialog.dart';
+import '../widgets/custom_textfield.dart';
 import '../widgets/helper_widgets.dart';
 
 class WatchedMovies extends StatefulWidget {
@@ -258,35 +259,44 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                           ],
                         ),
                         onSave: () {
-                          WatchedMovieService(uid: user.uid)
-                              .addWatchedMovies()
-                              .then((value) {
-                            showToast(
-                                msg: 'Record saved successfully!',
-                                backGroundColor: colorGreen);
-                            isMovieExist = false;
-                            yearCheck = '';
-                            _movieNameController.clear();
-                            _movieYearController.clear();
-                          }).onError((error, stackTrace) {
-                            print(error);
-                            print(stackTrace);
-                            showToast(
-                                msg: 'Something went wrong! Error - $error',
-                                backGroundColor: colorRed);
-                          });
+                          if (!isMovieExist) {
+                            WatchedMovieService(uid: user.uid)
+                                .addWatchedMovies(data: [
+                              {
+                                'name': _movieNameController.text,
+                                'year': _movieYearController.text
+                              }
+                            ]).then((value) {
+                              showToast(
+                                  msg:
+                                      '${_movieNameController.text} was added successfully!',
+                                  backGroundColor: colorGreen);
+                              clear();
+                            }).onError((error, stackTrace) {
+                              print(error);
+                              print(stackTrace);
+                              showToast(
+                                  msg: 'Something went wrong! Error - $error',
+                                  backGroundColor: colorRed);
+                            });
+                          }
                         },
                       ),
                     )).whenComplete(() {
-              isMovieExist = false;
-              yearCheck = '';
-              _movieNameController.clear();
-              _movieYearController.clear();
+              clear();
             });
           },
         ),
       )),
     );
+  }
+
+  // resetting the forms and other values
+  clear() {
+    isMovieExist = false;
+    yearCheck = '';
+    _movieNameController.clear();
+    _movieYearController.clear();
   }
 
   // sorting the list
