@@ -40,256 +40,247 @@ class _WatchedMoviesState extends State<WatchedMovies> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: (Scaffold(
-        appBar: AppBar(
-          title: AppBarTitle(title: 'Watched Movies'),
-          centerTitle: true,
-          actions: [
-            IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  showSearch(
-                      context: context, delegate: Search(itemList: movies));
-                }),
-          ],
-        ),
-        body: StreamBuilder(
-            stream: WatchedMovieService(uid: user.uid).getWatchedMoviesStream(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    'Something went wrong. \n Error - ${snapshot.error}',
-                    style: TextStyle(
-                        fontFamily: fontRegular, fontWeight: FontWeight.bold),
-                  ),
-                );
-              }
-              if (snapshot.hasData && !snapshot.data.exists) {
-                return Center(
-                  child: Text(
-                    'Document does not exist',
-                    style: TextStyle(
-                        fontFamily: fontRegular, fontWeight: FontWeight.bold),
-                  ),
-                );
-              }
+    return (Scaffold(
+      appBar: AppBar(
+        title: AppBarTitle(title: 'Watched Movies'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                showSearch(
+                    context: context, delegate: Search(itemList: movies));
+              }),
+        ],
+      ),
+      body: StreamBuilder(
+          stream: WatchedMovieService(uid: user.uid).getWatchedMoviesStream(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Something went wrong. \n Error - ${snapshot.error}',
+                  style: TextStyle(
+                      fontFamily: fontRegular, fontWeight: FontWeight.bold),
+                ),
+              );
+            }
+            if (snapshot.hasData && !snapshot.data.exists) {
+              return Center(
+                child: Text(
+                  'Document does not exist',
+                  style: TextStyle(
+                      fontFamily: fontRegular, fontWeight: FontWeight.bold),
+                ),
+              );
+            }
 
-              movies = snapshot.data['movies'];
+            movies = snapshot.data['movies'];
 
-              sortList();
+            sortList();
 
-              // getting the movie list to another variable to check if it exists
-              movies.forEach((element) {
-                movieNames.add(element['name'].toLowerCase());
-              });
+            // getting the movie list to another variable to check if it exists
+            movies.forEach((element) {
+              movieNames.add(element['name'].toLowerCase());
+            });
 
-              return Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                          decoration: BoxDecoration(
-                              color:
-                                  Theme.of(context).chipTheme.backgroundColor,
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Text(
-                            "${movies.length.toString()} movies",
-                            style: TextStyle(
-                                fontFamily: fontMedium,
-                                fontWeight: FontWeight.bold),
-                          ),
+            return Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).chipTheme.backgroundColor,
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Text(
+                          "${movies.length.toString()} movies",
+                          style: TextStyle(
+                              fontFamily: fontMedium,
+                              fontWeight: FontWeight.bold),
                         ),
-                        Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(left: 24),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 1),
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Theme.of(context).dividerColor,
-                                    width: 1.0),
-                                borderRadius: BorderRadius.circular(12)),
-                            child: DropdownButton(
-                              underline: SizedBox(),
-                              elevation: 10,
-                              style: TextStyle(
-                                fontFamily: fontRegular,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              value: dropDownValue,
-                              isDense: true,
-                              items: dropDownList
-                                  .map((value) => DropdownMenuItem(
-                                        child: Text(
-                                          value,
-                                          style: TextStyle(
-                                              fontFamily: fontRegular),
-                                        ),
-                                        value: value,
-                                      ))
-                                  .toList(),
-                              onChanged: (value) {
-                                print('inside on change');
-                                setState(() {
-                                  dropDownValue = value;
-                                  print('set change: $value');
-                                });
-                              },
-                              isExpanded: true,
-                              hint: Text(
-                                'Sort by',
-                                style: TextStyle(fontFamily: fontRegular),
-                              ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(left: 24),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Theme.of(context).dividerColor,
+                                  width: 1.0),
+                              borderRadius: BorderRadius.circular(12)),
+                          child: DropdownButton(
+                            underline: SizedBox(),
+                            elevation: 10,
+                            style: TextStyle(
+                              fontFamily: fontRegular,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            value: dropDownValue,
+                            isDense: true,
+                            items: dropDownList
+                                .map((value) => DropdownMenuItem(
+                                      child: Text(
+                                        value,
+                                        style:
+                                            TextStyle(fontFamily: fontRegular),
+                                      ),
+                                      value: value,
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              print('inside on change');
+                              setState(() {
+                                dropDownValue = value;
+                                print('set change: $value');
+                              });
+                            },
+                            isExpanded: true,
+                            hint: Text(
+                              'Sort by',
+                              style: TextStyle(fontFamily: fontRegular),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: movies != null && movies.length > 0
-                        ? Scrollbar(
-                            isAlwaysShown: true,
-                            showTrackOnHover: true,
-                            thickness: 6.0,
-                            child: ListView.builder(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10.0),
-                              itemCount: movies.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Dismissible(
-                                  key: Key(movies[index].toString()),
-                                  direction: DismissDirection.endToStart,
-                                  background: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 30),
-                                    alignment: Alignment.centerRight,
-                                    child: Icon(Icons.delete_forever,
-                                        color: colorWhite, size: 35),
-                                    decoration: BoxDecoration(
-                                      color: colorRed,
-                                    ),
+                ),
+                Expanded(
+                  child: movies != null && movies.length > 0
+                      ? Scrollbar(
+                          isAlwaysShown: true,
+                          showTrackOnHover: true,
+                          thickness: 6.0,
+                          child: ListView.builder(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            itemCount: movies.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Dismissible(
+                                key: Key(movies[index].toString()),
+                                direction: DismissDirection.endToStart,
+                                background: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 30),
+                                  alignment: Alignment.centerRight,
+                                  child: Icon(Icons.delete_forever,
+                                      color: colorWhite, size: 35),
+                                  decoration: BoxDecoration(
+                                    color: colorRed,
                                   ),
-                                  confirmDismiss: (direction) async {
-                                    print(movies[index].toString());
+                                ),
+                                confirmDismiss: (direction) async {
+                                  print(movies[index].toString());
 
-                                    var movieName =
-                                        movies[index]['name'].toString();
-                                    var movieYear =
-                                        movies[index]['year'].toString();
+                                  var movieName =
+                                      movies[index]['name'].toString();
+                                  var movieYear =
+                                      movies[index]['year'].toString();
 
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            CustomDeleteDialog(onPressed: () {
-                                              WatchedMovieService(uid: user.uid)
-                                                  .deleteWatchedMovie(data: [
-                                                {
-                                                  'name': movieName,
-                                                  'year': movieYear
-                                                }
-                                              ]).then((value) {
-                                                showToast(
-                                                    msg:
-                                                        '$movieName ($movieYear) deleted successfully!',
-                                                    backGroundColor:
-                                                        colorGreen);
-                                                clear();
-                                              }).onError((error, stackTrace) {
-                                                print(error);
-                                                print(stackTrace);
-                                                showToast(
-                                                    msg:
-                                                        'Something went wrong! \n Error - $error',
-                                                    backGroundColor: colorRed);
-                                              });
-                                              finish(context);
-                                            }));
-                                    return false;
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              color: Colors.grey, width: 0.5)),
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          CustomDeleteDialog(onPressed: () {
+                                            WatchedMovieService(uid: user.uid)
+                                                .deleteWatchedMovie(data: [
+                                              {
+                                                'name': movieName,
+                                                'year': movieYear
+                                              }
+                                            ]).then((value) {
+                                              showToast(
+                                                  msg:
+                                                      '$movieName ($movieYear) deleted successfully!',
+                                                  backGroundColor: colorGreen);
+                                              clear();
+                                            }).onError((error, stackTrace) {
+                                              print(error);
+                                              print(stackTrace);
+                                              showToast(
+                                                  msg:
+                                                      'Something went wrong! \n Error - $error',
+                                                  backGroundColor: colorRed);
+                                            });
+                                            finish(context);
+                                          }));
+                                  return false;
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: Colors.grey, width: 0.5)),
+                                  ),
+                                  child: ListTile(
+                                    enableFeedback: true,
+                                    title: Text(
+                                      movies[index]['name'],
+                                      style: TextStyle(
+                                          fontFamily: fontRegular,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    child: ListTile(
+                                    subtitle: Text(
+                                      movies[index]['year'].toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: fontMedium),
+                                    ),
+                                    trailing: IconButton(
                                       enableFeedback: true,
-                                      title: Text(
-                                        movies[index]['name'],
-                                        style: TextStyle(
-                                            fontFamily: fontRegular,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      subtitle: Text(
-                                        movies[index]['year'].toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: fontMedium),
-                                      ),
-                                      trailing: IconButton(
-                                        enableFeedback: true,
-                                        iconSize: 20,
-                                        tooltip: 'Edit movie details',
-                                        icon: Icon(Icons.edit),
-                                        onPressed: () {
-                                          print(movies[index]);
+                                      iconSize: 20,
+                                      tooltip: 'Edit movie details',
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () {
+                                        print(movies[index]);
 
-                                          var movieName = movies[index]['name'];
-                                          var movieYear =
-                                              movies[index]['year'].toString();
+                                        var movieName = movies[index]['name'];
+                                        var movieYear =
+                                            movies[index]['year'].toString();
 
-                                          _movieNameController.text = movieName;
-                                          _movieYearController.text = movieYear;
+                                        _movieNameController.text = movieName;
+                                        _movieYearController.text = movieYear;
 
-                                          movieToRemove = [
-                                            {
-                                              'name': movieName,
-                                              'year': movieYear
-                                            }
-                                          ];
-                                          showMovieDialog(context,
-                                                  type: 'Update')
-                                              .whenComplete(() {
-                                            clear();
-                                          });
-                                        },
-                                      ),
+                                        movieToRemove = [
+                                          {'name': movieName, 'year': movieYear}
+                                        ];
+                                        showMovieDialog(context, type: 'Update')
+                                            .whenComplete(() {
+                                          clear();
+                                        });
+                                      },
                                     ),
                                   ),
-                                );
-                              },
-                            ))
-                        : CustomNoRecords(text: 'No data available'),
-                  ),
-                ],
-              );
-            }),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            showMovieDialog(context, type: 'Add').whenComplete(() {
-              clear();
-            });
-          },
-        ),
-      )),
-    );
+                                ),
+                              );
+                            },
+                          ))
+                      : CustomNoRecords(text: 'No data available'),
+                ),
+              ],
+            );
+          }),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          showMovieDialog(context, type: 'Add').whenComplete(() {
+            clear();
+          });
+        },
+      ),
+    ));
   }
 
   Future showMovieDialog(BuildContext context, {@required String type}) {

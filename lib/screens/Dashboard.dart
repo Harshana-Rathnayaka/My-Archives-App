@@ -25,51 +25,49 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: AppBarTitle(title: 'My Archives'),
-          centerTitle: true,
-        ),
-        drawer: CustomDrawer(),
-        body: Column(
-          children: [
-            Expanded(
-              child: GridView(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                scrollDirection: Axis.vertical,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
-                children: [
-                  DashboardCard(
-                    displayIcon: Icons.movie_outlined,
-                    title: 'MOVIES',
-                    onPressed: () {
-                      launchScreen(context, WatchedMovies.tag);
-                    },
-                  ),
-                  DashboardCard(
-                    displayIcon: Icons.live_tv,
-                    title: 'TV SERIES',
-                    onPressed: () {},
-                  ),
-                  DashboardCard(
-                    displayIcon: Icons.bookmark,
-                    title: 'WATCHLIST',
-                    onPressed: () {
-                      launchScreen(context, Watchlist.tag);
-                    },
-                  ),
-                  DashboardCard(
-                    displayIcon: Icons.location_pin,
-                    title: 'PLACES',
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: AppBarTitle(title: 'My Archives'),
+        centerTitle: true,
+      ),
+      drawer: CustomDrawer(),
+      body: Column(
+        children: [
+          Expanded(
+            child: GridView(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+              scrollDirection: Axis.vertical,
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              children: [
+                DashboardCard(
+                  displayIcon: Icons.movie_outlined,
+                  title: 'MOVIES',
+                  onPressed: () {
+                    launchScreen(context, WatchedMovies.tag);
+                  },
+                ),
+                DashboardCard(
+                  displayIcon: Icons.live_tv,
+                  title: 'TV SERIES',
+                  onPressed: () {},
+                ),
+                DashboardCard(
+                  displayIcon: Icons.bookmark,
+                  title: 'WATCHLIST',
+                  onPressed: () {
+                    launchScreen(context, Watchlist.tag);
+                  },
+                ),
+                DashboardCard(
+                  displayIcon: Icons.location_pin,
+                  title: 'PLACES',
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
