@@ -17,35 +17,38 @@ class WatchedMovieService {
   }
 
 // add to watched movies collection
-  Future addWatchedMovies({List<Map<String, dynamic>> data}) async {
+  Future addWatchedMovies({List<Map<String, dynamic>> movieToAdd}) async {
     print('adding');
-    print(data);
+    print(movieToAdd);
 
     DocumentSnapshot dbDoc = await movieCollection.doc(uid).get();
 
     if (!dbDoc.exists) {
       return await movieCollection
           .doc(uid)
-          .set({"movies": FieldValue.arrayUnion(data)});
+          .set({"movies": FieldValue.arrayUnion(movieToAdd)});
     }
 
     return await movieCollection
         .doc(uid)
-        .update({"movies": FieldValue.arrayUnion(data)});
+        .update({"movies": FieldValue.arrayUnion(movieToAdd)});
   }
 
 // updating movie details
-  Future updateWatchedMovieDetails({List<Map<String, dynamic>> data}) async {
+  Future updateWatchedMovieDetails(
+      {List<Map<String, dynamic>> movieToRemove,
+      List<Map<String, dynamic>> movieToUpdate}) async {
     print('updating');
-    print(data);
+    print(movieToRemove);
+    print(movieToUpdate);
 
     print('removing and adding');
     return await movieCollection
         .doc(uid)
-        .update({"movies": FieldValue.arrayRemove(data)})
+        .update({"movies": FieldValue.arrayRemove(movieToRemove)})
         .then((value) => movieCollection
             .doc(uid)
-            .update({"movies": FieldValue.arrayUnion(data)}))
+            .update({"movies": FieldValue.arrayUnion(movieToUpdate)}))
         .then((value) => print('after adding'));
   }
 

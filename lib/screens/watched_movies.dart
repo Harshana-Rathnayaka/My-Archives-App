@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:my_archive/widgets/custom_delete_dialog.dart';
 
 import '../constants/colors.dart';
 import '../constants/fonts.dart';
 import '../services/movie_service.dart';
 import '../utils/helper_methods.dart';
 import '../widgets/custom_dialog.dart';
+import '../widgets/custom_delete_dialog.dart';
 import '../widgets/custom_textfield.dart';
 import '../widgets/helper_widgets.dart';
 
@@ -31,6 +31,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
   bool isMovieExist = false;
   String yearCheck;
   String dropDownValue = 'Sort by Name ASC';
+  List<Map<String, dynamic>> movieToRemove;
 
   TextEditingController _movieNameController = TextEditingController();
   TextEditingController _movieYearController = TextEditingController();
@@ -60,6 +61,16 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                   ),
                 );
               }
+              if (snapshot.hasData && !snapshot.data.exists) {
+                return Center(
+                  child: Text(
+                    'Document does not exist',
+                    style: TextStyle(
+                        fontFamily: fontRegular, fontWeight: FontWeight.bold),
+                  ),
+                );
+              }
+
               movies = snapshot.data['movies'];
 
               sortList();
@@ -140,99 +151,125 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                     ),
                   ),
                   Expanded(
-                    child: Scrollbar(
-                      isAlwaysShown: true,
-                      showTrackOnHover: true,
-                      thickness: 6.0,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        itemCount: movies.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Dismissible(
-                            key: Key(movies[index].toString()),
-                            direction: DismissDirection.endToStart,
-                            background: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 30),
-                              alignment: Alignment.centerRight,
-                              child: Icon(Icons.delete_forever,
-                                  color: colorWhite, size: 35),
-                              decoration: BoxDecoration(
-                                color: colorRed,
-                              ),
-                            ),
-                            confirmDismiss: (direction) async {
-                              print(movies[index].toString());
+                    child: movies != null && movies.length > 0
+                        ? Scrollbar(
+                            isAlwaysShown: true,
+                            showTrackOnHover: true,
+                            thickness: 6.0,
+                            child: ListView.builder(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10.0),
+                              itemCount: movies.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Dismissible(
+                                  key: Key(movies[index].toString()),
+                                  direction: DismissDirection.endToStart,
+                                  background: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 30),
+                                    alignment: Alignment.centerRight,
+                                    child: Icon(Icons.delete_forever,
+                                        color: colorWhite, size: 35),
+                                    decoration: BoxDecoration(
+                                      color: colorRed,
+                                    ),
+                                  ),
+                                  confirmDismiss: (direction) async {
+                                    print(movies[index].toString());
 
-                              var movieName = movies[index]['name'].toString();
-                              var movieYear = movies[index]['year'].toString();
-                              showDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      CustomDeleteDialog(onPressed: () {
-                                        WatchedMovieService(uid: user.uid)
-                                            .deleteWatchedMovie(data: [
-                                          {'name': movieName, 'year': movieYear}
-                                        ]).then((value) {
-                                          showToast(
-                                              msg:
-                                                  '$movieName ($movieYear) deleted successfully!',
-                                              backGroundColor: colorGreen);
-                                        }).onError((error, stackTrace) {
-                                          print(error);
-                                          print(stackTrace);
-                                          showToast(
-                                              msg:
-                                                  'Something went wrong! \n Error - $error',
-                                              backGroundColor: colorRed);
-                                        });
-                                        finish(context);
-                                      }));
-                              return false;
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
-                                        color: Colors.grey, width: 0.5)),
-                              ),
-                              child: ListTile(
-                                enableFeedback: true,
-                                title: Text(
-                                  movies[index]['name'],
-                                  style: TextStyle(
-                                      fontFamily: fontRegular,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: Text(
-                                  movies[index]['year'].toString(),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: fontMedium),
-                                ),
-                                trailing: IconButton(
-                                  enableFeedback: true,
-                                  iconSize: 20,
-                                  tooltip: 'Edit movie details',
-                                  icon: Icon(Icons.edit),
-                                  onPressed: () {
-                                    print(movies[index]);
-                                    _movieNameController.text =
-                                        movies[index]['name'];
-
-                                    _movieYearController.text =
+                                    var movieName =
+                                        movies[index]['name'].toString();
+                                    var movieYear =
                                         movies[index]['year'].toString();
-                                    showMovieDialog(context, type: 2)
-                                        .whenComplete(() {
-                                      clear();
-                                    });
+
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            CustomDeleteDialog(onPressed: () {
+                                              WatchedMovieService(uid: user.uid)
+                                                  .deleteWatchedMovie(data: [
+                                                {
+                                                  'name': movieName,
+                                                  'year': movieYear
+                                                }
+                                              ]).then((value) {
+                                                showToast(
+                                                    msg:
+                                                        '$movieName ($movieYear) deleted successfully!',
+                                                    backGroundColor:
+                                                        colorGreen);
+                                                clear();
+                                              }).onError((error, stackTrace) {
+                                                print(error);
+                                                print(stackTrace);
+                                                showToast(
+                                                    msg:
+                                                        'Something went wrong! \n Error - $error',
+                                                    backGroundColor: colorRed);
+                                              });
+                                              finish(context);
+                                            }));
+                                    return false;
                                   },
-                                ),
-                              ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: Colors.grey, width: 0.5)),
+                                    ),
+                                    child: ListTile(
+                                      enableFeedback: true,
+                                      title: Text(
+                                        movies[index]['name'],
+                                        style: TextStyle(
+                                            fontFamily: fontRegular,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      subtitle: Text(
+                                        movies[index]['year'].toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: fontMedium),
+                                      ),
+                                      trailing: IconButton(
+                                        enableFeedback: true,
+                                        iconSize: 20,
+                                        tooltip: 'Edit movie details',
+                                        icon: Icon(Icons.edit),
+                                        onPressed: () {
+                                          print(movies[index]);
+
+                                          var movieName = movies[index]['name'];
+                                          var movieYear =
+                                              movies[index]['year'].toString();
+
+                                          _movieNameController.text = movieName;
+                                          _movieYearController.text = movieYear;
+
+                                          movieToRemove = [
+                                            {
+                                              'name': movieName,
+                                              'year': movieYear
+                                            }
+                                          ];
+                                          showMovieDialog(context,
+                                                  type: 'Update')
+                                              .whenComplete(() {
+                                            clear();
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ))
+                        : Center(
+                            child: Text(
+                              'No data available',
+                              style: TextStyle(fontFamily: fontMedium),
                             ),
-                          );
-                        },
-                      ),
-                    ),
+                          ),
                   ),
                 ],
               );
@@ -241,7 +278,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
-            showMovieDialog(context, type: 1).whenComplete(() {
+            showMovieDialog(context, type: 'Add').whenComplete(() {
               clear();
             });
           },
@@ -250,12 +287,12 @@ class _WatchedMoviesState extends State<WatchedMovies> {
     );
   }
 
-  Future showMovieDialog(BuildContext context, {@required int type}) {
+  Future showMovieDialog(BuildContext context, {@required String type}) {
     return showDialog(
         context: context,
         builder: (context) => StatefulBuilder(
               builder: (context, StateSetter setState) => CustomDialog(
-                heading: type == 1
+                heading: type == 'Add'
                     ? 'Add to your watched movies'
                     : 'Edit movie details',
                 child: Column(
@@ -332,26 +369,50 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                 ),
                 onSave: () {
                   if (!isMovieExist) {
-                    WatchedMovieService(uid: user.uid).addWatchedMovies(data: [
+                    // values from the text controllers to add to the db (preparing this list for easy access)
+                    var newMovieDetails = [
                       {
                         'name': _movieNameController.text,
                         'year': _movieYearController.text
                       }
-                    ]).then((value) {
-                      showToast(
-                          msg: type == 1
-                              ? '${_movieNameController.text} was added successfully!'
-                              : '${_movieNameController.text} details updated successfully!',
-                          backGroundColor: colorGreen);
-                      clear();
-                      if (type == 2) finish(context);
-                    }).onError((error, stackTrace) {
-                      print(error);
-                      print(stackTrace);
-                      showToast(
-                          msg: 'Something went wrong! \n Error - $error',
-                          backGroundColor: colorRed);
-                    });
+                    ];
+                    if (type == 'Add') {
+                      // if the dialog is to add movies
+                      WatchedMovieService(uid: user.uid)
+                          .addWatchedMovies(movieToAdd: newMovieDetails)
+                          .then((value) {
+                        showToast(
+                            msg:
+                                '${_movieNameController.text} was added successfully!',
+                            backGroundColor: colorGreen);
+                        clear();
+                      }).onError((error, stackTrace) {
+                        print(error);
+                        print(stackTrace);
+                        showToast(
+                            msg: 'Something went wrong! \n Error - $error',
+                            backGroundColor: colorRed);
+                      });
+                    } else {
+                      // if the dialog is to update movies
+                      WatchedMovieService(uid: user.uid)
+                          .updateWatchedMovieDetails(
+                              movieToRemove: movieToRemove,
+                              movieToUpdate: newMovieDetails)
+                          .then((value) {
+                        showToast(
+                            msg: 'Movie details were updated successfully!',
+                            backGroundColor: colorGreen);
+                        clear();
+                        finish(context);
+                      }).onError((error, stackTrace) {
+                        print(error);
+                        print(stackTrace);
+                        showToast(
+                            msg: 'Something went wrong! \n Error - $error',
+                            backGroundColor: colorRed);
+                      });
+                    }
                   }
                 },
               ),
@@ -360,10 +421,14 @@ class _WatchedMoviesState extends State<WatchedMovies> {
 
   // resetting the forms and other values
   clear() {
+    print(movies);
     isMovieExist = false;
     yearCheck = '';
     _movieNameController.clear();
     _movieYearController.clear();
+    movies.forEach((element) {
+      movieNames.add(element['name'].toLowerCase());
+    });
   }
 
   // sorting the list
