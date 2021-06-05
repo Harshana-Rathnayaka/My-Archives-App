@@ -28,12 +28,25 @@ class _WatchlistState extends State<Watchlist> {
   TextEditingController _moviesController = TextEditingController();
 
   final user = FirebaseAuth.instance.currentUser;
+  var _stream;
+
+  getData() {
+    setState(() {
+      _stream = FirebaseFirestore.instance
+          .collection('watchlist')
+          .doc(user.uid)
+          .get();
+    });
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final _stream =
-        FirebaseFirestore.instance.collection('watchlist').doc(user.uid).get();
-
     return DefaultTabController(
       length: 2,
       child: SafeArea(
@@ -78,14 +91,19 @@ class _WatchlistState extends State<Watchlist> {
 
                 if (snapshot.connectionState == ConnectionState.done) {
                   Map<String, dynamic> data = snapshot.data.data();
-                  return data['movies'] != null
-                      ? ListView.builder(
-                          itemCount: data['movies'].length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(data['movies'][index]),
-                            );
+                  return data['movies'] != null && data['movies'].length > 0
+                      ? RefreshIndicator(
+                          onRefresh: () async {
+                            getData();
                           },
+                          child: ListView.builder(
+                            itemCount: data['movies'].length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(data['movies'][index]),
+                              );
+                            },
+                          ),
                         )
                       : Center(
                           child: Text(
@@ -122,14 +140,19 @@ class _WatchlistState extends State<Watchlist> {
 
                 if (snapshot.connectionState == ConnectionState.done) {
                   Map<String, dynamic> data = snapshot.data.data();
-                  return data['tvSeries'] != null
-                      ? ListView.builder(
-                          itemCount: data['tvSeries'].length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(data['tvSeries'][index]),
-                            );
+                  return data['tvSeries'] != null && data['tvSeries'].length > 0
+                      ? RefreshIndicator(
+                          onRefresh: () async {
+                            getData();
                           },
+                          child: ListView.builder(
+                            itemCount: data['tvSeries'].length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(data['tvSeries'][index]),
+                              );
+                            },
+                          ),
                         )
                       : Center(
                           child: Text(
@@ -196,6 +219,7 @@ class _WatchlistState extends State<Watchlist> {
                                       msg: 'Record saved successfully!',
                                       backGroundColor: colorGreen);
                                   _tvSeriesController.clear();
+                                  getData();
                                 }).onError((error, stackTrace) {
                                   print(error);
                                   print(stackTrace);
@@ -241,6 +265,7 @@ class _WatchlistState extends State<Watchlist> {
                                       msg: 'Record saved successfully!',
                                       backGroundColor: colorGreen);
                                   _moviesController.clear();
+                                  getData();
                                 }).onError((error, stackTrace) {
                                   print(error);
                                   print(stackTrace);
