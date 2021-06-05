@@ -154,6 +154,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                                       color: Colors.grey, width: 0.5)),
                             ),
                             child: ListTile(
+                              enableFeedback: true,
                               title: Text(
                                 movies[index]['name'],
                                 style: TextStyle(
@@ -166,9 +167,24 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                                     fontWeight: FontWeight.bold,
                                     fontFamily: fontMedium),
                               ),
-                              trailing: Icon(Icons.edit, size: 20),
-                              enableFeedback: true,
-                              onTap: () {},
+                              trailing: IconButton(
+                                enableFeedback: true,
+                                iconSize: 20,
+                                tooltip: 'Edit movie details',
+                                icon: Icon(Icons.edit),
+                                onPressed: () {
+                                  print(movies[index]);
+                                  _movieNameController.text =
+                                      movies[index]['name'];
+
+                                  _movieYearController.text =
+                                      movies[index]['year'].toString();
+                                  showMovieDialog(context, type: 2)
+                                      .whenComplete(() {
+                                    clear();
+                                  });
+                                },
+                              ),
                             ),
                           );
                         },
@@ -178,117 +194,125 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                 ],
               );
             }),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
-            showDialog(
-                context: context,
-                builder: (context) => StatefulBuilder(
-                      builder: (context, StateSetter setState) => CustomDialog(
-                        heading: 'Add to your watched movies',
-                        child: Column(
-                          children: [
-                            CustomTextField(
-                              controller: _movieNameController,
-                              hint: 'Name of the Movie',
-                              icon: Icons.movie_outlined,
-                              validation: (val) {
-                                String newVal = val.trim();
-                                if (newVal.isEmpty) {
-                                  return 'Name of the Movie is required';
-                                }
-                                return null;
-                              },
-                              onChanged: (val) {
-                                setState(() {
-                                  isMovieExist =
-                                      checkifExist(val.trim().toLowerCase());
-                                });
-                              },
-                            ),
-                            isMovieExist
-                                ? Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      'This movie already exists in the database',
-                                      style: TextStyle(
-                                          color: Theme.of(context).errorColor,
-                                          fontFamily: fontMedium,
-                                          fontSize: textSizeSmall),
-                                    ),
-                                  )
-                                : Container(),
-                            SizedBox(height: 16.0),
-                            CustomTextField(
-                              controller: _movieYearController,
-                              hint: 'Year',
-                              icon: Icons.date_range,
-                              isNumber: true,
-                              maxLength: 4,
-                              validation: (val) {
-                                String newVal = val.trim();
-                                if (newVal.isEmpty) {
-                                  return 'Year is required';
-                                }
-                                return null;
-                              },
-                              onChanged: (val) {
-                                if (val.trim().isNotEmpty) {
-                                  setState(() {
-                                    yearCheck = checkYear(val.trim());
-                                  });
-                                } else if (val.trim().isEmpty) {
-                                  setState(() {
-                                    yearCheck = null;
-                                  });
-                                }
-                              },
-                            ),
-                            yearCheck != null
-                                ? Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      yearCheck,
-                                      style: TextStyle(
-                                          color: Theme.of(context).errorColor,
-                                          fontFamily: fontRegular,
-                                          fontSize: textSizeSmall),
-                                    ),
-                                  )
-                                : Container()
-                          ],
-                        ),
-                        onSave: () {
-                          if (!isMovieExist) {
-                            WatchedMovieService(uid: user.uid)
-                                .addWatchedMovies(data: [
-                              {
-                                'name': _movieNameController.text,
-                                'year': _movieYearController.text
-                              }
-                            ]).then((value) {
-                              showToast(
-                                  msg:
-                                      '${_movieNameController.text} was added successfully!',
-                                  backGroundColor: colorGreen);
-                              clear();
-                            }).onError((error, stackTrace) {
-                              print(error);
-                              print(stackTrace);
-                              showToast(
-                                  msg: 'Something went wrong! Error - $error',
-                                  backGroundColor: colorRed);
-                            });
-                          }
-                        },
-                      ),
-                    )).whenComplete(() {
+            showMovieDialog(context, type: 1).whenComplete(() {
               clear();
             });
           },
         ),
       )),
     );
+  }
+
+  Future showMovieDialog(BuildContext context, {@required int type}) {
+    return showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+              builder: (context, StateSetter setState) => CustomDialog(
+                heading: type == 1
+                    ? 'Add to your watched movies'
+                    : 'Edit movie details',
+                child: Column(
+                  children: [
+                    CustomTextField(
+                      controller: _movieNameController,
+                      hint: 'Name of the Movie',
+                      icon: Icons.movie_outlined,
+                      validation: (val) {
+                        String newVal = val.trim();
+                        if (newVal.isEmpty) {
+                          return 'Name of the Movie is required';
+                        }
+                        return null;
+                      },
+                      onChanged: (val) {
+                        setState(() {
+                          isMovieExist = checkifExist(val.trim().toLowerCase());
+                          print(isMovieExist);
+                        });
+                      },
+                    ),
+                    isMovieExist
+                        ? Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              'This movie already exists in the database',
+                              style: TextStyle(
+                                  color: Theme.of(context).errorColor,
+                                  fontFamily: fontMedium,
+                                  fontSize: textSizeSmall),
+                            ),
+                          )
+                        : Container(),
+                    SizedBox(height: 16.0),
+                    CustomTextField(
+                      controller: _movieYearController,
+                      hint: 'Year',
+                      icon: Icons.date_range,
+                      isNumber: true,
+                      maxLength: 4,
+                      validation: (val) {
+                        String newVal = val.trim();
+                        if (newVal.isEmpty) {
+                          return 'Year is required';
+                        }
+                        return null;
+                      },
+                      onChanged: (val) {
+                        if (val.trim().isNotEmpty) {
+                          setState(() {
+                            yearCheck = checkYear(val.trim());
+                          });
+                        } else if (val.trim().isEmpty) {
+                          setState(() {
+                            yearCheck = null;
+                          });
+                        }
+                      },
+                    ),
+                    yearCheck != null
+                        ? Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              yearCheck,
+                              style: TextStyle(
+                                  color: Theme.of(context).errorColor,
+                                  fontFamily: fontRegular,
+                                  fontSize: textSizeSmall),
+                            ),
+                          )
+                        : Container()
+                  ],
+                ),
+                onSave: () {
+                  if (!isMovieExist) {
+                    WatchedMovieService(uid: user.uid).addWatchedMovies(data: [
+                      {
+                        'name': _movieNameController.text,
+                        'year': _movieYearController.text
+                      }
+                    ]).then((value) {
+                      showToast(
+                          msg: type == 1
+                              ? '${_movieNameController.text} was added successfully!'
+                              : '${_movieNameController.text} details updated successfully!',
+                          backGroundColor: colorGreen);
+                      clear();
+                      if (type == 2) finish(context);
+                    }).onError((error, stackTrace) {
+                      print(error);
+                      print(stackTrace);
+                      showToast(
+                          msg: 'Something went wrong! \n Error - $error',
+                          backGroundColor: colorRed);
+                    });
+                  }
+                },
+              ),
+            ));
   }
 
   // resetting the forms and other values
