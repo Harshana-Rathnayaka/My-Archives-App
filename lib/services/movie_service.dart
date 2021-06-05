@@ -34,7 +34,7 @@ class WatchedMovieService {
         .update({"movies": FieldValue.arrayUnion(data)});
   }
 
-// updatin movie details
+// updating movie details
   Future updateWatchedMovieDetails({List<Map<String, dynamic>> data}) async {
     print('updating');
     print(data);
@@ -47,5 +47,15 @@ class WatchedMovieService {
             .doc(uid)
             .update({"movies": FieldValue.arrayUnion(data)}))
         .then((value) => print('after adding'));
+  }
+
+  // deleting a movie
+  Future deleteWatchedMovie({List<Map<String, dynamic>> data}) async {
+    print('deleting');
+    print(data);
+
+    return await movieCollection
+        .doc(uid)
+        .update({"movies": FieldValue.arrayRemove(data)});
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:my_archive/widgets/custom_delete_dialog.dart';
 
 import '../constants/colors.dart';
 import '../constants/fonts.dart';
@@ -147,43 +148,85 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         itemCount: movies.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: Colors.grey, width: 0.5)),
+                          return Dismissible(
+                            key: Key(movies[index].toString()),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 30),
+                              alignment: Alignment.centerRight,
+                              child: Icon(Icons.delete_forever,
+                                  color: colorWhite, size: 35),
+                              decoration: BoxDecoration(
+                                color: colorRed,
+                              ),
                             ),
-                            child: ListTile(
-                              enableFeedback: true,
-                              title: Text(
-                                movies[index]['name'],
-                                style: TextStyle(
-                                    fontFamily: fontRegular,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Text(
-                                movies[index]['year'].toString(),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: fontMedium),
-                              ),
-                              trailing: IconButton(
-                                enableFeedback: true,
-                                iconSize: 20,
-                                tooltip: 'Edit movie details',
-                                icon: Icon(Icons.edit),
-                                onPressed: () {
-                                  print(movies[index]);
-                                  _movieNameController.text =
-                                      movies[index]['name'];
+                            confirmDismiss: (direction) async {
+                              print(movies[index].toString());
 
-                                  _movieYearController.text =
-                                      movies[index]['year'].toString();
-                                  showMovieDialog(context, type: 2)
-                                      .whenComplete(() {
-                                    clear();
-                                  });
-                                },
+                              var movieName = movies[index]['name'].toString();
+                              var movieYear = movies[index]['year'].toString();
+                              showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      CustomDeleteDialog(onPressed: () {
+                                        WatchedMovieService(uid: user.uid)
+                                            .deleteWatchedMovie(data: [
+                                          {'name': movieName, 'year': movieYear}
+                                        ]).then((value) {
+                                          showToast(
+                                              msg:
+                                                  '$movieName ($movieYear) deleted successfully!',
+                                              backGroundColor: colorGreen);
+                                        }).onError((error, stackTrace) {
+                                          print(error);
+                                          print(stackTrace);
+                                          showToast(
+                                              msg:
+                                                  'Something went wrong! \n Error - $error',
+                                              backGroundColor: colorRed);
+                                        });
+                                        finish(context);
+                                      }));
+                              return false;
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        color: Colors.grey, width: 0.5)),
+                              ),
+                              child: ListTile(
+                                enableFeedback: true,
+                                title: Text(
+                                  movies[index]['name'],
+                                  style: TextStyle(
+                                      fontFamily: fontRegular,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Text(
+                                  movies[index]['year'].toString(),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: fontMedium),
+                                ),
+                                trailing: IconButton(
+                                  enableFeedback: true,
+                                  iconSize: 20,
+                                  tooltip: 'Edit movie details',
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () {
+                                    print(movies[index]);
+                                    _movieNameController.text =
+                                        movies[index]['name'];
+
+                                    _movieYearController.text =
+                                        movies[index]['year'].toString();
+                                    showMovieDialog(context, type: 2)
+                                        .whenComplete(() {
+                                      clear();
+                                    });
+                                  },
+                                ),
                               ),
                             ),
                           );
