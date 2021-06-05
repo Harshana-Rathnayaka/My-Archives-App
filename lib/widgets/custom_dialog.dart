@@ -47,7 +47,9 @@ class _CustomDialogState extends State<CustomDialog> {
                 height: 60.0,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.teal[800],
+                  color: notifier.isDark
+                      ? Theme.of(context).primaryColor
+                      : Theme.of(context).appBarTheme.backgroundColor,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(16),
                       topRight: Radius.circular(16)),
@@ -90,7 +92,7 @@ class _CustomDialogState extends State<CustomDialog> {
                                           finish(context);
                                         }
                                       : null,
-                              icon: Icon(Icons.cancel),
+                              icon: Icon(Icons.cancel, color: colorWhite),
                               label: Text(
                                 'CANCEL',
                                 style: TextStyle(
@@ -119,7 +121,7 @@ class _CustomDialogState extends State<CustomDialog> {
                                       }
                                     }
                                   : null,
-                              icon: Icon(Icons.check_circle),
+                              icon: Icon(Icons.check_circle, color: colorWhite),
                               label: Text(
                                 'SAVE',
                                 style: TextStyle(

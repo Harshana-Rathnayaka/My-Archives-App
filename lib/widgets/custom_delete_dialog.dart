@@ -42,7 +42,9 @@ class _CustomDeleteDialogState extends State<CustomDeleteDialog> {
                 height: 60.0,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.teal[800],
+                  color: notifier.isDark
+                      ? Theme.of(context).primaryColor
+                      : Theme.of(context).appBarTheme.backgroundColor,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(16),
                       topRight: Radius.circular(16)),
@@ -89,7 +91,7 @@ class _CustomDeleteDialogState extends State<CustomDeleteDialog> {
                                           finish(context);
                                         }
                                       : null,
-                              icon: Icon(Icons.cancel),
+                              icon: Icon(Icons.cancel, color: colorWhite),
                               label: Text(
                                 'NO',
                                 style: TextStyle(
@@ -110,7 +112,7 @@ class _CustomDeleteDialogState extends State<CustomDeleteDialog> {
                                           widget.onPressed();
                                         }
                                       : null,
-                              icon: Icon(Icons.check_circle),
+                              icon: Icon(Icons.check_circle, color: colorWhite),
                               label: Text(
                                 'YES',
                                 style: TextStyle(

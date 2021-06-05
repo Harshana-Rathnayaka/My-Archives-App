@@ -124,10 +124,10 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                           child: DropdownButton(
                             underline: SizedBox(),
                             elevation: 10,
-                            style: TextStyle(
-                              fontFamily: fontRegular,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: DefaultTextStyle.of(context).style.copyWith(
+                                  fontFamily: fontRegular,
+                                  fontWeight: FontWeight.bold,
+                                ),
                             value: dropDownValue,
                             isDense: true,
                             items: dropDownList

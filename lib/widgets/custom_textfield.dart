@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../constants/colors.dart';
 import '../constants/fonts.dart';
 
 // ignore: must_be_immutable
@@ -88,7 +89,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         hintStyle: TextStyle(fontFamily: fontRegular),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
-          borderSide: BorderSide(color: Colors.grey[300], width: 1.0),
+          borderSide: BorderSide(color: hintColor, width: 1.0),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),

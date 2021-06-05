@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 
-const lightPrimaryColor = Color(0xFF008080);
-const lightAppBarColor = Color(0xFF008080);
-const lightScaffoldColor = Color(0xFF48a999);
 const colorWhite = Color(0xFFE7F2F8);
-const colorRed = Color(0xFFDE3C4B);
-const colorGreen = Color(0xFF1D8C34);
+const colorRed = Color(0xFFC80815);
+const colorGreen = Color(0xFF00A600);
 const colorBlack = Color(0xDD000000);
 
-// colors for the dark mode switch GitHub style
+// text colors
+const hintColor = Color(0xFFE0E0E0);
+
+// light theme colors
+const lightAccentColor = Color(0xFF002FA7);
+const lightAppBarColor = Color(0xFF002147);
+
+// dark theme colors
+const darkAccentColor = Color(0xFF2FBE43);
+
+// colors for the dark theme switch GitHub style
 const activeToggleColor = Color(0xFF6E40C9);
 const inactiveToggleColor = Color(0xFF2F363D);
 const activeSwitchBorder = Color(0xFF3C1E70);
