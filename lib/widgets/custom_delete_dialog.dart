@@ -10,9 +10,11 @@ import '../utils/helper_methods.dart';
 
 class CustomDeleteDialog extends StatefulWidget {
   final Function onPressed;
+  final String item;
 
   CustomDeleteDialog({
     @required this.onPressed,
+    @required this.item,
   });
   @override
   _CustomDeleteDialogState createState() => _CustomDeleteDialogState();
@@ -62,19 +64,25 @@ class _CustomDeleteDialogState extends State<CustomDeleteDialog> {
                 ),
               ),
               Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                  ),
-                  child: Text(
-                    'Are you sure you want to delete this item? This action is irreversible.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontFamily: fontMedium),
-                  )),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                ),
+                child: Text.rich(
+                  TextSpan(
+                      style: DefaultTextStyle.of(context)
+                          .style
+                          .copyWith(fontFamily: fontMedium),
+                      text: 'Are you sure you want to delete ',
+                      children: [
+                        TextSpan(
+                            text: '${widget.item}?',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        TextSpan(text: ' This action is irreversible.')
+                      ]),
+                  textAlign: TextAlign.center,
+                ),
+              ),
               SizedBox(height: 12),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              //   child: CircularProgressIndicator(),
-              // ),
               Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16.0, vertical: 16.0),
@@ -109,7 +117,14 @@ class _CustomDeleteDialogState extends State<CustomDeleteDialog> {
                               onPressed:
                                   connectionStatus != ConnectivityStatus.Offline
                                       ? () {
-                                          widget.onPressed();
+                                          setState(() {
+                                            _isLoading = true;
+                                          });
+                                          widget.onPressed().then((val) {
+                                            setState(() {
+                                              _isLoading = false;
+                                            });
+                                          });
                                         }
                                       : null,
                               icon: Icon(Icons.check_circle, color: colorWhite),
