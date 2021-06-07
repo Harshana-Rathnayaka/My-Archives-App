@@ -105,7 +105,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                             color: Theme.of(context).chipTheme.backgroundColor,
                             borderRadius: BorderRadius.circular(12)),
                         child: Text(
-                          "${movies.length.toString()} movies",
+                          "${movies.length.toString()} Movies",
                           style: TextStyle(
                               fontFamily: fontMedium,
                               fontWeight: FontWeight.bold),
@@ -191,8 +191,9 @@ class _WatchedMoviesState extends State<WatchedMovies> {
 
                                   showDialog(
                                       context: context,
-                                      builder: (context) =>
-                                          CustomDeleteDialog(onPressed: () {
+                                      builder: (context) => CustomDeleteDialog(
+                                          item: movieName,
+                                          onPressed: () {
                                             WatchedMovieService(uid: user.uid)
                                                 .deleteWatchedMovie(data: [
                                               {
