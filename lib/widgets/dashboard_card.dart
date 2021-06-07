@@ -5,11 +5,13 @@ import 'package:my_archive/constants/fonts.dart';
 class DashboardCard extends StatelessWidget {
   final IconData displayIcon;
   final String title;
+  final String description;
   final Function onPressed;
   final String tooltip;
   const DashboardCard({
     @required this.displayIcon,
     @required this.title,
+    @required this.description,
     @required this.onPressed,
     @required this.tooltip,
     Key key,
@@ -24,9 +26,11 @@ class DashboardCard extends StatelessWidget {
         child: Card(
           elevation: 10,
           child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   padding: EdgeInsets.all(10),
@@ -40,9 +44,14 @@ class DashboardCard extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                      letterSpacing: 1.0,
-                      fontFamily: fontRegular,
-                      fontSize: textSizeLargeMedium),
+                      letterSpacing: 0.2,
+                      fontFamily: fontBold,
+                      fontSize: textSizeMedium),
+                ),
+                Text(
+                  description,
+                  style: TextStyle(
+                      fontFamily: fontRegular, fontSize: textSizeSmall),
                 )
               ],
             ),

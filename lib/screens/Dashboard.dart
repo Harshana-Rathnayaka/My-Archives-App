@@ -43,6 +43,7 @@ class _DashboardState extends State<Dashboard> {
                 DashboardCard(
                   displayIcon: Icons.movie_outlined,
                   title: 'MOVIES',
+                  description: 'All the movies that you have watched',
                   tooltip: 'Watched movies',
                   onPressed: () {
                     launchScreen(context, WatchedMovies.tag);
@@ -51,12 +52,15 @@ class _DashboardState extends State<Dashboard> {
                 DashboardCard(
                   displayIcon: Icons.live_tv,
                   title: 'TV SERIES',
+                  description: 'All the tv series that you have watched',
                   tooltip: 'Watched tv series',
                   onPressed: () {},
                 ),
                 DashboardCard(
                   displayIcon: Icons.bookmark,
                   title: 'WATCHLIST',
+                  description:
+                      'All the movies and tv series that you want to watch',
                   tooltip: 'Movies and tv series to watch',
                   onPressed: () {
                     launchScreen(context, Watchlist.tag);
@@ -65,12 +69,15 @@ class _DashboardState extends State<Dashboard> {
                 DashboardCard(
                   displayIcon: Icons.location_pin,
                   title: 'PLACES',
+                  description:
+                      'All the places that you have been to (Coming soon)',
                   tooltip: 'Places that I have been to',
                   onPressed: () {},
                 ),
                 DashboardCard(
                   displayIcon: Icons.monetization_on,
                   title: 'EXPENSES',
+                  description: 'All of your monthly expenses (Coming soon)',
                   tooltip: 'Monthly expenses',
                   onPressed: () {},
                 ),
