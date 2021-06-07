@@ -7,6 +7,7 @@ import '../widgets/custom_drawer.dart';
 import '../widgets/dashboard_card.dart';
 import '../widgets/helper_widgets.dart';
 import 'watched_movies.dart';
+import 'watched_tv_series.dart';
 import 'watchlist.dart';
 
 class Dashboard extends StatefulWidget {
@@ -54,7 +55,9 @@ class _DashboardState extends State<Dashboard> {
                   title: 'TV SERIES',
                   description: 'All the tv series that you have watched',
                   tooltip: 'Watched tv series',
-                  onPressed: () {},
+                  onPressed: () {
+                    launchScreen(context, WatchedTvSeries.tag);
+                  },
                 ),
                 DashboardCard(
                   displayIcon: Icons.bookmark,

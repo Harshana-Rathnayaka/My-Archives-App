@@ -10,6 +10,7 @@ import 'providers/google_signin_provider.dart';
 import 'screens/dashboard.dart';
 import 'screens/login.dart';
 import 'screens/watched_movies.dart';
+import 'screens/watched_tv_series.dart';
 import 'screens/watchlist.dart';
 import 'services/connectivity_service.dart';
 
@@ -63,6 +64,7 @@ class MyApp extends StatelessWidget {
               Dashboard.tag: (BuildContext context) => Dashboard(),
               Watchlist.tag: (BuildContext context) => Watchlist(),
               WatchedMovies.tag: (BuildContext context) => WatchedMovies(),
+              WatchedTvSeries.tag: (BuildContext context) => WatchedTvSeries(),
             },
           );
         }),
