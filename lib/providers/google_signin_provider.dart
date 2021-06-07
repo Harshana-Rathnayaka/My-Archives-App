@@ -85,11 +85,14 @@ class GoogleSignInProvider extends ChangeNotifier {
 
     final movieCollection =
         FirebaseFirestore.instance.collection('watchedMovies');
+    final tvSeriesCollection =
+        FirebaseFirestore.instance.collection('watchedTvSeries');
     final watchlistCollection =
         FirebaseFirestore.instance.collection('watchlist');
 
-    // checking whether docs exist under this uid
+    // checking whether docs exist under this uid and creating a doc if it does not exist
     DocumentSnapshot movieDbDoc = await movieCollection.doc(uid).get();
+    DocumentSnapshot tvSeriesDoc = await tvSeriesCollection.doc(uid).get();
     DocumentSnapshot watchlistDbDoc = await watchlistCollection.doc(uid).get();
 
     if (movieDbDoc.exists) {
@@ -97,6 +100,13 @@ class GoogleSignInProvider extends ChangeNotifier {
     } else {
       print('creating doc in watchedMovies');
       await movieCollection.doc(uid).set({"movies": []});
+    }
+
+    if (tvSeriesDoc.exists) {
+      print('doc exists in watchedTvSeries');
+    } else {
+      print('creating doc in watchedTvSeries');
+      await tvSeriesCollection.doc(uid).set({"tvSeries": []});
     }
 
     if (watchlistDbDoc.exists) {
