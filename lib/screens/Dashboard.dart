@@ -27,10 +27,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: AppBarTitle(title: 'My Archives'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: AppBarTitle(title: 'My Archives'), centerTitle: true),
       drawer: CustomDrawer(),
       body: Column(
         children: [
@@ -38,8 +35,7 @@ class _DashboardState extends State<Dashboard> {
             child: GridView(
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
               scrollDirection: Axis.vertical,
-              gridDelegate:
-                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
               children: [
                 DashboardCard(
                   displayIcon: Icons.movie_outlined,
@@ -62,8 +58,7 @@ class _DashboardState extends State<Dashboard> {
                 DashboardCard(
                   displayIcon: Icons.bookmark,
                   title: 'WATCHLIST',
-                  description:
-                      'All the movies and tv series that you want to watch',
+                  description: 'All the movies and tv series that you want to watch',
                   tooltip: 'Movies and tv series to watch',
                   onPressed: () {
                     launchScreen(context, Watchlist.tag);
@@ -72,8 +67,7 @@ class _DashboardState extends State<Dashboard> {
                 DashboardCard(
                   displayIcon: Icons.location_pin,
                   title: 'PLACES',
-                  description:
-                      'All the places that you have been to (Coming soon)',
+                  description: 'All the places that you have been to (Coming soon)',
                   tooltip: 'Places that I have been to',
                   onPressed: () {},
                 ),

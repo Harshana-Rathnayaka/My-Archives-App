@@ -26,13 +26,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: notifier.isDark
-                      ? Theme.of(context).accentColor.withOpacity(0.5)
-                      : Theme.of(context).accentColor.withOpacity(0.8),
-                  border: Border(
-                    bottom: BorderSide(
-                        width: 1.0, color: Theme.of(context).dividerColor),
-                  ),
+                  color: notifier.isDark ? Theme.of(context).colorScheme.secondary.withOpacity(0.5) : Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                  border: Border(bottom: BorderSide(width: 1.0, color: Theme.of(context).dividerColor)),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
                 child: Row(
@@ -42,22 +37,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       backgroundColor: colorWhite,
                       radius: 26,
                       child: CachedNetworkImage(
+                        width: 50,
+                        height: 50,
                         imageUrl: user.photoURL,
                         imageBuilder: (context, imageProvider) => Container(
                           width: 80.0,
                           height: 80.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image: imageProvider, fit: BoxFit.cover),
-                          ),
+                          decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
                         ),
-                        width: 50,
-                        height: 50,
-                        placeholder: (context, url) =>
-                            new Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) =>
-                            new Icon(Icons.error, size: 26),
+                        placeholder: (context, url) => new Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => new Icon(Icons.error, size: 26),
                       ),
                     ),
                     Expanded(
@@ -66,19 +55,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              user.displayName,
-                              style: TextStyle(
-                                  fontFamily: fontRegular,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
+                            Text(user.displayName, style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold, color: Colors.white)),
                             Text(
                               user.email,
-                              style: TextStyle(
-                                  fontFamily: fontRegular,
-                                  fontSize: textSizeSmall,
-                                  color: Colors.white),
+                              style: TextStyle(fontFamily: fontRegular, fontSize: textSizeSmall, color: Colors.white),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             ),
@@ -96,43 +76,25 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       padding: 1.0,
                       activeToggleColor: activeToggleColor,
                       inactiveToggleColor: inactiveToggleColor,
-                      activeSwitchBorder:
-                          Border.all(color: activeSwitchBorder, width: 1.0),
-                      inactiveSwitchBorder:
-                          Border.all(color: inactiveSwitchBorder, width: 1.0),
+                      activeSwitchBorder: Border.all(color: activeSwitchBorder, width: 1.0),
+                      inactiveSwitchBorder: Border.all(color: inactiveSwitchBorder, width: 1.0),
                       activeColor: activeColor,
                       inactiveColor: colorWhite,
-                      activeIcon:
-                          Icon(Icons.nightlight_round, color: activeIcon),
+                      activeIcon: Icon(Icons.nightlight_round, color: activeIcon),
                       inactiveIcon: Icon(Icons.wb_sunny, color: inactiveIcon),
-                      onToggle: (value) {
-                        notifier.toggleTheme();
-                      },
+                      onToggle: (value) => notifier.toggleTheme(),
                     ),
                   ],
                 ),
               ),
               SizedBox(height: 16),
-              ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Settings'),
-                onTap: () {},
-              ),
+              ListTile(leading: Icon(Icons.settings), title: Text('Settings'), onTap: () {}),
               SizedBox(height: 16),
-              ListTile(
-                leading: Icon(Icons.question_answer),
-                title: Text('FAQs'),
-              ),
+              ListTile(leading: Icon(Icons.question_answer), title: Text('FAQs')),
               SizedBox(height: 16),
-              ListTile(
-                leading: Icon(Icons.help),
-                title: Text('How to use'),
-              ),
+              ListTile(leading: Icon(Icons.help), title: Text('How to use')),
               SizedBox(height: 16),
-              ListTile(
-                leading: Icon(Icons.info),
-                title: Text('About'),
-              ),
+              ListTile(leading: Icon(Icons.info), title: Text('About')),
               SizedBox(height: 24),
               Divider(thickness: 1.0),
               SizedBox(height: 16),
@@ -140,8 +102,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Logout'),
                 onTap: () {
-                  final provider =
-                      Provider.of<GoogleSignInProvider>(context, listen: false);
+                  final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
                   provider.logout();
                 },
               ),

@@ -20,16 +20,20 @@ Map<int, Color> colorLight = {
 
 // light theme
 ThemeData light = ThemeData(
-  brightness: Brightness.light,
-  accentColor: lightAccentColor,
   appBarTheme: AppBarTheme(color: lightAppBarColor),
-  primarySwatch: MaterialColor(0xFF002FA7, colorLight),
+  colorScheme: ColorScheme.fromSwatch(primarySwatch: MaterialColor(0xFF002FA7, colorLight)).copyWith(
+    secondary: lightAccentColor,
+    brightness: Brightness.light,
+  ),
 );
 
 // dark theme
 ThemeData dark = ThemeData(
-  brightness: Brightness.dark,
-  accentColor: darkAccentColor,
+  appBarTheme: AppBarTheme(color: Colors.black45, foregroundColor: colorWhite),
+  colorScheme: ColorScheme.fromSwatch(primarySwatch: MaterialColor(0xFF2FBE43, colorLight)).copyWith(
+    secondary: darkAccentColor,
+    brightness: Brightness.dark,
+  ),
 );
 
 class ThemeNotifier extends ChangeNotifier {

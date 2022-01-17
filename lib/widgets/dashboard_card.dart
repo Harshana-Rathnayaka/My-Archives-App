@@ -34,25 +34,12 @@ class DashboardCard extends StatelessWidget {
               children: [
                 Container(
                   padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).accentColor.withOpacity(0.2)),
-                  child: Icon(displayIcon,
-                      color: Theme.of(context).accentColor, size: 28),
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).colorScheme.secondary.withOpacity(0.2)),
+                  child: Icon(displayIcon, color: Theme.of(context).colorScheme.secondary, size: 28),
                 ),
                 SizedBox(height: 10),
-                Text(
-                  title,
-                  style: TextStyle(
-                      letterSpacing: 0.2,
-                      fontFamily: fontBold,
-                      fontSize: textSizeMedium),
-                ),
-                Text(
-                  description,
-                  style: TextStyle(
-                      fontFamily: fontRegular, fontSize: textSizeSmall),
-                )
+                Text(title, style: TextStyle(letterSpacing: 0.2, fontFamily: fontBold, fontSize: textSizeMedium)),
+                Text(description, style: TextStyle(fontFamily: fontRegular, fontSize: textSizeSmall))
               ],
             ),
           ),

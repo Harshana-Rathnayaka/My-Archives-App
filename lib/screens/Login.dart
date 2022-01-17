@@ -34,10 +34,7 @@ class _LoginState extends State<Login> {
                 child: Text(
                   'Welcome To Your Archives',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontFamily: fontBold,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 36),
+                  style: TextStyle(fontFamily: fontBold, fontWeight: FontWeight.bold, fontSize: 36),
                 ),
               ),
             ),
@@ -47,25 +44,18 @@ class _LoginState extends State<Login> {
                 if (connectionStatus != ConnectivityStatus.Offline) {
                   provider.login();
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(customSnackbar(
-                      icon: Icons.cloud_off,
-                      iconColor: colorRed,
-                      text: 'No internet connection!'));
+                  ScaffoldMessenger.of(context).showSnackBar(customSnackbar(icon: Icons.cloud_off, iconColor: colorRed, text: 'No internet connection!'));
                 }
               },
               child: Card(
-                color: connectionStatus != ConnectivityStatus.Offline
-                    ? Theme.of(context).cardColor
-                    : Colors.grey[400],
+                color: connectionStatus != ConnectivityStatus.Offline ? Theme.of(context).cardColor : Colors.grey[400],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
-                elevation:
-                    connectionStatus != ConnectivityStatus.Offline ? 16.0 : 0.0,
+                elevation: connectionStatus != ConnectivityStatus.Offline ? 16.0 : 0.0,
                 margin: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -77,10 +67,7 @@ class _LoginState extends State<Login> {
                       SizedBox(width: 20.0),
                       Text(
                         'Continue with Google',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: fontRegular,
-                            fontSize: textSizeLargeMedium),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontFamily: fontRegular, fontSize: textSizeLargeMedium),
                       ),
                     ],
                   ),

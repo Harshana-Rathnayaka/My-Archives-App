@@ -31,14 +31,7 @@ class _WatchlistState extends State<Watchlist> {
   final user = FirebaseAuth.instance.currentUser;
   var _stream;
 
-  getData() {
-    setState(() {
-      _stream = FirebaseFirestore.instance
-          .collection('watchlist')
-          .doc(user.uid)
-          .get();
-    });
-  }
+  getData() => _stream = FirebaseFirestore.instance.collection('watchlist').doc(user.uid).get();
 
   @override
   void initState() {
@@ -55,29 +48,17 @@ class _WatchlistState extends State<Watchlist> {
           title: AppBarTitle(title: 'Watchlist'),
           centerTitle: true,
           bottom: TabBar(
-            labelStyle: TextStyle(
-                fontFamily: fontMedium,
-                fontSize: textSizeMedium,
-                letterSpacing: 1.0),
+            labelStyle: TextStyle(fontFamily: fontMedium, fontSize: textSizeMedium, letterSpacing: 1.0),
             physics: AlwaysScrollableScrollPhysics(),
-            tabs: [
-              Tab(text: 'Movies'),
-              Tab(text: 'Tv Series'),
-            ],
+            tabs: [Tab(text: 'Movies'), Tab(text: 'Tv Series')],
           ),
         ),
         body: TabBarView(children: [
           FutureBuilder<DocumentSnapshot>(
             future: _stream,
-            builder: (BuildContext context,
-                AsyncSnapshot<DocumentSnapshot> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    "Something went wrong",
-                    style: TextStyle(fontFamily: fontRegular),
-                  ),
-                );
+                return Center(child: Text("Something went wrong", style: TextStyle(fontFamily: fontRegular)));
               }
 
               if (snapshot.hasData && !snapshot.data.exists) {
@@ -88,15 +69,11 @@ class _WatchlistState extends State<Watchlist> {
                 Map<String, dynamic> data = snapshot.data.data();
                 return data['movies'] != null && data['movies'].length > 0
                     ? RefreshIndicator(
-                        onRefresh: () async {
-                          getData();
-                        },
+                        onRefresh: () async => getData(),
                         child: ListView.builder(
                           itemCount: data['movies'].length,
                           itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(data['movies'][index]),
-                            );
+                            return ListTile(title: Text(data['movies'][index]));
                           },
                         ),
                       )
@@ -108,15 +85,9 @@ class _WatchlistState extends State<Watchlist> {
           ),
           FutureBuilder<DocumentSnapshot>(
             future: _stream,
-            builder: (BuildContext context,
-                AsyncSnapshot<DocumentSnapshot> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    "Something went wrong",
-                    style: TextStyle(fontFamily: fontRegular),
-                  ),
-                );
+                return Center(child: Text("Something went wrong", style: TextStyle(fontFamily: fontRegular)));
               }
 
               if (snapshot.hasData && !snapshot.data.exists) {
@@ -127,15 +98,11 @@ class _WatchlistState extends State<Watchlist> {
                 Map<String, dynamic> data = snapshot.data.data();
                 return data['tvSeries'] != null && data['tvSeries'].length > 0
                     ? RefreshIndicator(
-                        onRefresh: () async {
-                          getData();
-                        },
+                        onRefresh: () async => getData(),
                         child: ListView.builder(
                           itemCount: data['tvSeries'].length,
                           itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(data['tvSeries'][index]),
-                            );
+                            return ListTile(title: Text(data['tvSeries'][index]));
                           },
                         ),
                       )
@@ -150,17 +117,14 @@ class _WatchlistState extends State<Watchlist> {
           builder: (context, notifier, child) => SpeedDial(
             child: Icon(Icons.add),
             closedForegroundColor: notifier.isDark ? colorBlack : colorWhite,
-            closedBackgroundColor: Theme.of(context).accentColor,
-            openForegroundColor: Theme.of(context).accentColor,
+            closedBackgroundColor: Theme.of(context).colorScheme.secondary,
+            openForegroundColor: Theme.of(context).colorScheme.secondary,
             openBackgroundColor: notifier.isDark ? colorBlack : colorWhite,
-            labelsStyle: TextStyle(
-                fontFamily: fontRegular,
-                color: colorBlack,
-                fontWeight: FontWeight.bold),
+            labelsStyle: TextStyle(fontFamily: fontRegular, color: colorBlack, fontWeight: FontWeight.bold),
             speedDialChildren: <SpeedDialChild>[
               SpeedDialChild(
                 child: Icon(Icons.live_tv),
-                backgroundColor: Theme.of(context).accentColor,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 label: 'Add a Tv Series',
                 closeSpeedDialOnPressed: true,
                 onPressed: () {
@@ -190,14 +154,8 @@ class _WatchlistState extends State<Watchlist> {
                               },
                             ),
                             onSave: () {
-                              WatchlistService(uid: user.uid).addToWatchlist(
-                                  type: 'tvSeries',
-                                  watchlistData: [
-                                    _tvSeriesController.text
-                                  ]).then((value) {
-                                showToast(
-                                    msg: 'Record saved successfully!',
-                                    backGroundColor: colorGreen);
+                              WatchlistService(uid: user.uid).addToWatchlist(type: 'tvSeries', watchlistData: [_tvSeriesController.text]).then((value) {
+                                showToast(msg: 'Record saved successfully!', backGroundColor: colorGreen);
                                 _tvSeriesController.clear();
                                 getData();
                               }).onError((error, stackTrace) {
@@ -212,7 +170,7 @@ class _WatchlistState extends State<Watchlist> {
               ),
               SpeedDialChild(
                 child: Icon(Icons.movie),
-                backgroundColor: Theme.of(context).accentColor,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 label: 'Add a Movie',
                 closeSpeedDialOnPressed: true,
                 onPressed: () {
@@ -236,22 +194,14 @@ class _WatchlistState extends State<Watchlist> {
                               },
                             ),
                             onSave: () {
-                              WatchlistService(uid: user.uid).addToWatchlist(
-                                  type: 'movies',
-                                  watchlistData: [
-                                    _moviesController.text
-                                  ]).then((value) {
-                                showToast(
-                                    msg: 'Record saved successfully!',
-                                    backGroundColor: colorGreen);
+                              WatchlistService(uid: user.uid).addToWatchlist(type: 'movies', watchlistData: [_moviesController.text]).then((value) {
+                                showToast(msg: 'Record saved successfully!', backGroundColor: colorGreen);
                                 _moviesController.clear();
                                 getData();
                               }).onError((error, stackTrace) {
                                 print(error);
                                 print(stackTrace);
-                                showToast(
-                                    msg: 'Something went wrong! Error - $error',
-                                    backGroundColor: colorRed);
+                                showToast(msg: 'Something went wrong! Error - $error', backGroundColor: colorRed);
                               });
                             },
                           )).whenComplete(() {
