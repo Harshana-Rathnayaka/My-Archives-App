@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../constants/colors.dart';
 import '../constants/fonts.dart';
 
-launchScreen(context, String tag, {Object arguments}) {
+launchScreen(context, String tag, {Object? arguments}) {
   if (arguments == null) {
     Navigator.pushNamed(context, tag);
   } else {
@@ -13,7 +13,7 @@ launchScreen(context, String tag, {Object arguments}) {
   }
 }
 
-void launchScreenWithNewTask(context, String tag, {Object arguments}) {
+void launchScreenWithNewTask(context, String tag, {Object? arguments}) {
   if (arguments == null) {
     Navigator.pushNamedAndRemoveUntil(context, tag, (r) => false);
   } else {
@@ -35,9 +35,9 @@ void hideKeyboard(context) {
 }
 
 SnackBar customSnackbar({
-  @required IconData icon,
-  @required Color iconColor,
-  @required String text,
+  required IconData icon,
+  required Color iconColor,
+  required String text,
 }) {
   return SnackBar(
     content: Row(
@@ -54,7 +54,7 @@ SnackBar customSnackbar({
   );
 }
 
-void showToast({@required String msg, @required Color backGroundColor}) =>
+void showToast({required String msg, required Color backGroundColor}) =>
     Fluttertoast.showToast(
         msg: msg,
         textColor: colorWhite,

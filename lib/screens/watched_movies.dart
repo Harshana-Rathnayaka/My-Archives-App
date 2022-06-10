@@ -31,9 +31,9 @@ class _WatchedMoviesState extends State<WatchedMovies> {
     'Sort by Name DESC'
   ];
   bool isMovieExist = false;
-  String yearCheck;
+  String? yearCheck;
   String dropDownValue = 'Sort by Name ASC';
-  List<Map<String, dynamic>> movieToRemove;
+  late List<Map<String, dynamic>> movieToRemove;
 
   TextEditingController _movieNameController = TextEditingController();
   TextEditingController _movieYearController = TextEditingController();
@@ -54,8 +54,8 @@ class _WatchedMoviesState extends State<WatchedMovies> {
         ],
       ),
       body: StreamBuilder(
-          stream: WatchedMovieService(uid: user.uid).getWatchedMoviesStream(),
-          builder: (context, snapshot) {
+          stream: WatchedMovieService(uid: user!.uid).getWatchedMoviesStream(),
+          builder: (context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData) {
               return Center(
                 child: CircularProgressIndicator(),
@@ -70,7 +70,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                 ),
               );
             }
-            if (snapshot.hasData && !snapshot.data.exists) {
+            if (snapshot.hasData && snapshot.data == null) {
               return Center(
                 child: Text(
                   'Document does not exist',
@@ -140,7 +140,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                                       value: value,
                                     ))
                                 .toList(),
-                            onChanged: (value) {
+                            onChanged: (dynamic value) {
                               print('inside on change');
                               setState(() {
                                 dropDownValue = value;
@@ -194,7 +194,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                                       builder: (context) => CustomDeleteDialog(
                                           item: movieName,
                                           onPressed: () {
-                                            WatchedMovieService(uid: user.uid)
+                                            WatchedMovieService(uid: user!.uid)
                                                 .deleteWatchedMovie(data: [
                                               {
                                                 'name': movieName,
@@ -206,7 +206,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                                                       '$movieName ($movieYear) deleted successfully!',
                                                   backGroundColor: colorGreen);
                                               clear();
-                                            }).onError((error, stackTrace) {
+                                            }).onError((dynamic error, stackTrace) {
                                               print(error);
                                               print(stackTrace);
                                               showToast(
@@ -284,7 +284,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
     ));
   }
 
-  Future showMovieDialog(BuildContext context, {@required String type}) {
+  Future showMovieDialog(BuildContext context, {required String type}) {
     return showDialog(
         context: context,
         builder: (context) => StatefulBuilder(
@@ -354,7 +354,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                         ? Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              yearCheck,
+                              yearCheck!,
                               style: TextStyle(
                                   color: Theme.of(context).errorColor,
                                   fontFamily: fontRegular,
@@ -375,7 +375,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                     ];
                     if (type == 'Add') {
                       // if the dialog is to add movies
-                      WatchedMovieService(uid: user.uid)
+                      WatchedMovieService(uid: user!.uid)
                           .addWatchedMovies(movieToAdd: newMovieDetails)
                           .then((value) {
                         showToast(
@@ -383,7 +383,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                                 '${_movieNameController.text} was added successfully!',
                             backGroundColor: colorGreen);
                         clear();
-                      }).onError((error, stackTrace) {
+                      }).onError((dynamic error, stackTrace) {
                         print(error);
                         print(stackTrace);
                         showToast(
@@ -392,7 +392,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                       });
                     } else {
                       // if the dialog is to update movies
-                      WatchedMovieService(uid: user.uid)
+                      WatchedMovieService(uid: user!.uid)
                           .updateWatchedMovieDetails(
                               movieToRemove: movieToRemove,
                               movieToUpdate: newMovieDetails)
@@ -402,7 +402,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
                             backGroundColor: colorGreen);
                         clear();
                         finish(context);
-                      }).onError((error, stackTrace) {
+                      }).onError((dynamic error, stackTrace) {
                         print(error);
                         print(stackTrace);
                         showToast(
@@ -429,7 +429,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
   }
 
   // sorting the list
-  List sortList() {
+  List? sortList() {
     if (dropDownValue == 'Sort by Year ASC') {
       movies.sort((a, b) {
         return a['year'].toString().compareTo(b['year'].toString());
@@ -460,7 +460,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
   }
 
   // check if the year is correct and between range
-  String checkYear(value) {
+  String? checkYear(value) {
     int year = int.parse(value);
 
     if (year < 1900) {

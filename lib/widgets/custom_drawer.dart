@@ -26,7 +26,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: notifier.isDark ? Theme.of(context).colorScheme.secondary.withOpacity(0.5) : Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                  color: notifier.isDark! ? Theme.of(context).colorScheme.secondary.withOpacity(0.5) : Theme.of(context).colorScheme.secondary.withOpacity(0.8),
                   border: Border(bottom: BorderSide(width: 1.0, color: Theme.of(context).dividerColor)),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
@@ -39,7 +39,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       child: CachedNetworkImage(
                         width: 50,
                         height: 50,
-                        imageUrl: user.photoURL,
+                        imageUrl: user!.photoURL!,
                         imageBuilder: (context, imageProvider) => Container(
                           width: 80.0,
                           height: 80.0,
@@ -55,9 +55,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(user.displayName, style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold, color: Colors.white)),
+                            Text(user.displayName!, style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold, color: Colors.white)),
                             Text(
-                              user.email,
+                              user.email!,
                               style: TextStyle(fontFamily: fontRegular, fontSize: textSizeSmall, color: Colors.white),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
@@ -71,7 +71,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       width: 50.0,
                       height: 24.0,
                       toggleSize: 20.0,
-                      value: notifier.isDark,
+                      value: notifier.isDark!,
                       borderRadius: 14.0,
                       padding: 1.0,
                       activeToggleColor: activeToggleColor,

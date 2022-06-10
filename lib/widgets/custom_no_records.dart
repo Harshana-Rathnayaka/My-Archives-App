@@ -8,8 +8,8 @@ import '../constants/images.dart';
 class CustomNoRecords extends StatelessWidget {
   final String text;
   const CustomNoRecords({
-    Key key,
-    @required this.text,
+    Key? key,
+    required this.text,
   }) : super(key: key);
 
   @override

@@ -9,18 +9,18 @@ class DashboardCard extends StatelessWidget {
   final Function onPressed;
   final String tooltip;
   const DashboardCard({
-    @required this.displayIcon,
-    @required this.title,
-    @required this.description,
-    @required this.onPressed,
-    @required this.tooltip,
-    Key key,
+    required this.displayIcon,
+    required this.title,
+    required this.description,
+    required this.onPressed,
+    required this.tooltip,
+    Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: onPressed as void Function()?,
       child: Tooltip(
         message: tooltip,
         child: Card(

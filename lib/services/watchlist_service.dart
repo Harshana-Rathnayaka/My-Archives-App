@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class WatchlistService {
-  final String uid;
+  final String? uid;
 
   WatchlistService({this.uid});
   final CollectionReference _watchlistCollection =

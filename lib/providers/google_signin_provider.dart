@@ -10,15 +10,15 @@ class GoogleSignInProvider extends ChangeNotifier {
   final CollectionReference _usersCollection =
       FirebaseFirestore.instance.collection('users');
 
-  bool _isSigningIn;
+  bool? _isSigningIn;
 
   GoogleSignInProvider() {
     _isSigningIn = false;
   }
 
-  bool get isSigningIn => _isSigningIn;
+  bool? get isSigningIn => _isSigningIn;
 
-  set isSigningIn(bool isSigningIn) {
+  set isSigningIn(bool? isSigningIn) {
     _isSigningIn = isSigningIn;
     notifyListeners();
   }
@@ -42,7 +42,7 @@ class GoogleSignInProvider extends ChangeNotifier {
           await firebaseInstance.signInWithCredential(credential);
 
       // getting the logged in user from the result
-      final User loggedInUser = authResult.user;
+      final User loggedInUser = authResult.user!;
 
       print(loggedInUser.uid);
       print(loggedInUser.displayName);
@@ -57,7 +57,7 @@ class GoogleSignInProvider extends ChangeNotifier {
         "name": loggedInUser.displayName,
         "email": loggedInUser.email,
         "photoURL": loggedInUser.photoURL
-      }).onError((error, stackTrace) {
+      }).onError((dynamic error, stackTrace) {
         print('some error - $error');
         print(stackTrace);
       }).then((value) {

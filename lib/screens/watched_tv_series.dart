@@ -24,16 +24,11 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
   final user = FirebaseAuth.instance.currentUser;
   List tvSeries = [];
   List tvSeriesNames = [];
-  List dropDownList = [
-    'Sort by Year ASC',
-    'Sort by Year DESC',
-    'Sort by Name ASC',
-    'Sort by Name DESC'
-  ];
+  List dropDownList = ['Sort by Year ASC', 'Sort by Year DESC', 'Sort by Name ASC', 'Sort by Name DESC'];
   bool isTvSeriesExist = false;
-  String yearCheck;
+  String? yearCheck;
   String dropDownValue = 'Sort by Name ASC';
-  List<Map<String, dynamic>> tvSeriesToRemove;
+  late List<Map<String, dynamic>> tvSeriesToRemove;
 
   TextEditingController _tvSeriesNameController = TextEditingController();
   TextEditingController _tvSeriesYearController = TextEditingController();
@@ -44,51 +39,26 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
       appBar: AppBar(
         title: AppBarTitle(title: 'Watched Tv Series'),
         centerTitle: true,
-        actions: [
-          IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                showSearch(
-                    context: context, delegate: Search(itemList: tvSeries));
-              }),
-        ],
+        actions: [IconButton(icon: Icon(Icons.search), onPressed: () => showSearch(context: context, delegate: Search(itemList: tvSeries)))],
       ),
       body: StreamBuilder(
-          stream: WatchedTvSeriesService(uid: user.uid)
-              .getWatchedTvSeriesCollection(),
-          builder: (context, snapshot) {
+          stream: WatchedTvSeriesService(uid: user!.uid).getWatchedTvSeriesCollection(),
+          builder: (context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
+              return Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  'Something went wrong. \n Error - ${snapshot.error}',
-                  style: TextStyle(
-                      fontFamily: fontRegular, fontWeight: FontWeight.bold),
-                ),
-              );
+              return Center(child: Text('Something went wrong. \n Error - ${snapshot.error}', style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold)));
             }
-            if (snapshot.hasData && !snapshot.data.exists) {
-              return Center(
-                child: Text(
-                  'Document does not exist',
-                  style: TextStyle(
-                      fontFamily: fontRegular, fontWeight: FontWeight.bold),
-                ),
-              );
+            if (snapshot.hasData && snapshot.data == null) {
+              return Center(child: Text('Document does not exist', style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold)));
             }
-
             tvSeries = snapshot.data['tvSeries'];
 
             sortList();
 
             // getting the tv series list to another variable to check if it exists
-            tvSeries.forEach((element) {
-              tvSeriesNames.add(element['name'].toLowerCase());
-            });
+            tvSeries.forEach((element) => tvSeriesNames.add(element['name'].toLowerCase()));
 
             return Column(
               children: [
@@ -100,59 +70,25 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                     children: [
                       Container(
                         alignment: Alignment.center,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).chipTheme.backgroundColor,
-                            borderRadius: BorderRadius.circular(12)),
-                        child: Text(
-                          "${tvSeries.length.toString()} Tv Series",
-                          style: TextStyle(
-                              fontFamily: fontMedium,
-                              fontWeight: FontWeight.bold),
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                        decoration: BoxDecoration(color: Theme.of(context).chipTheme.backgroundColor, borderRadius: BorderRadius.circular(12)),
+                        child: Text("${tvSeries.length.toString()} Tv Series", style: TextStyle(fontFamily: fontMedium, fontWeight: FontWeight.bold)),
                       ),
                       Expanded(
                         child: Container(
                           margin: EdgeInsets.only(left: 24),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Theme.of(context).dividerColor,
-                                  width: 1.0),
-                              borderRadius: BorderRadius.circular(12)),
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                          decoration: BoxDecoration(border: Border.all(color: Theme.of(context).dividerColor, width: 1.0), borderRadius: BorderRadius.circular(12)),
                           child: DropdownButton(
                             underline: SizedBox(),
                             elevation: 10,
-                            style: DefaultTextStyle.of(context).style.copyWith(
-                                  fontFamily: fontRegular,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            style: DefaultTextStyle.of(context).style.copyWith(fontFamily: fontRegular, fontWeight: FontWeight.bold),
                             value: dropDownValue,
                             isDense: true,
-                            items: dropDownList
-                                .map((value) => DropdownMenuItem(
-                                      child: Text(
-                                        value,
-                                        style:
-                                            TextStyle(fontFamily: fontRegular),
-                                      ),
-                                      value: value,
-                                    ))
-                                .toList(),
-                            onChanged: (value) {
-                              print('inside on change');
-                              setState(() {
-                                dropDownValue = value;
-                                print('set change: $value');
-                              });
-                            },
+                            items: dropDownList.map((value) => DropdownMenuItem(child: Text(value, style: TextStyle(fontFamily: fontRegular)), value: value)).toList(),
+                            onChanged: (dynamic value) => setState(() => dropDownValue = value),
                             isExpanded: true,
-                            hint: Text(
-                              'Sort by',
-                              style: TextStyle(fontFamily: fontRegular),
-                            ),
+                            hint: Text('Sort by', style: TextStyle(fontFamily: fontRegular)),
                           ),
                         ),
                       ),
@@ -160,14 +96,13 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                   ),
                 ),
                 Expanded(
-                  child: tvSeries != null && tvSeries.length > 0
+                  child: tvSeries.length > 0
                       ? Scrollbar(
                           isAlwaysShown: true,
                           showTrackOnHover: true,
                           thickness: 6.0,
                           child: ListView.builder(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
                             itemCount: tvSeries.length,
                             itemBuilder: (BuildContext context, int index) {
                               return Dismissible(
@@ -176,45 +111,27 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                                 background: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 30),
                                   alignment: Alignment.centerRight,
-                                  child: Icon(Icons.delete_forever,
-                                      color: colorWhite, size: 35),
-                                  decoration: BoxDecoration(
-                                    color: colorRed,
-                                  ),
+                                  child: Icon(Icons.delete_forever, color: colorWhite, size: 35),
+                                  decoration: BoxDecoration(color: colorRed),
                                 ),
                                 confirmDismiss: (direction) async {
-                                  print(tvSeries[index].toString());
-
-                                  var tvSeriesName =
-                                      tvSeries[index]['name'].toString();
-                                  var tvSeriesYear =
-                                      tvSeries[index]['year'].toString();
+                                  var tvSeriesName = tvSeries[index]['name'].toString();
+                                  var tvSeriesYear = tvSeries[index]['year'].toString();
 
                                   showDialog(
                                       context: context,
                                       builder: (context) => CustomDeleteDialog(
                                           item: tvSeriesName,
                                           onPressed: () {
-                                            WatchedTvSeriesService(
-                                                    uid: user.uid)
-                                                .deleteWatchedTvSeries(data: [
-                                              {
-                                                'name': tvSeriesName,
-                                                'year': tvSeriesYear
-                                              }
+                                            WatchedTvSeriesService(uid: user!.uid).deleteWatchedTvSeries(data: [
+                                              {'name': tvSeriesName, 'year': tvSeriesYear}
                                             ]).then((value) {
-                                              showToast(
-                                                  msg:
-                                                      '$tvSeriesName ($tvSeriesYear) deleted successfully!',
-                                                  backGroundColor: colorGreen);
+                                              showToast(msg: '$tvSeriesName ($tvSeriesYear) deleted successfully!', backGroundColor: colorGreen);
                                               clear();
-                                            }).onError((error, stackTrace) {
+                                            }).onError((dynamic error, stackTrace) {
                                               print(error);
                                               print(stackTrace);
-                                              showToast(
-                                                  msg:
-                                                      'Something went wrong! \n Error - $error',
-                                                  backGroundColor: colorRed);
+                                              showToast(msg: 'Something went wrong! \n Error - $error', backGroundColor: colorRed);
                                             });
                                             finish(context);
                                           }));
@@ -223,23 +140,18 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     border: Border(
-                                      bottom: BorderSide(
-                                          color: Colors.grey, width: 0.5),
+                                      bottom: BorderSide(color: Colors.grey, width: 0.5),
                                     ),
                                   ),
                                   child: ListTile(
                                     enableFeedback: true,
                                     title: Text(
                                       tvSeries[index]['name'],
-                                      style: TextStyle(
-                                          fontFamily: fontRegular,
-                                          fontWeight: FontWeight.bold),
+                                      style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold),
                                     ),
                                     subtitle: Text(
                                       tvSeries[index]['year'].toString(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: fontMedium),
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontFamily: fontMedium),
                                     ),
                                     trailing: IconButton(
                                       enableFeedback: true,
@@ -249,25 +161,16 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                                       onPressed: () {
                                         print(tvSeries[index]);
 
-                                        var tvSeriesName =
-                                            tvSeries[index]['name'];
-                                        var tvSeriesYear =
-                                            tvSeries[index]['year'].toString();
+                                        var tvSeriesName = tvSeries[index]['name'];
+                                        var tvSeriesYear = tvSeries[index]['year'].toString();
 
-                                        _tvSeriesNameController.text =
-                                            tvSeriesName;
-                                        _tvSeriesYearController.text =
-                                            tvSeriesYear;
+                                        _tvSeriesNameController.text = tvSeriesName;
+                                        _tvSeriesYearController.text = tvSeriesYear;
 
                                         tvSeriesToRemove = [
-                                          {
-                                            'name': tvSeriesName,
-                                            'year': tvSeriesYear
-                                          }
+                                          {'name': tvSeriesName, 'year': tvSeriesYear}
                                         ];
-                                        showTvSeriesDialog(context,
-                                                type: 'Update')
-                                            .whenComplete(() {
+                                        showTvSeriesDialog(context, type: 'Update').whenComplete(() {
                                           clear();
                                         });
                                       },
@@ -283,25 +186,16 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
             );
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          showTvSeriesDialog(context, type: 'Add').whenComplete(() {
-            clear();
-          });
-        },
-      ),
+      floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: () => showTvSeriesDialog(context, type: 'Add').whenComplete(() => clear())),
     ));
   }
 
-  Future showTvSeriesDialog(BuildContext context, {@required String type}) {
+  Future showTvSeriesDialog(BuildContext context, {required String type}) {
     return showDialog(
         context: context,
         builder: (context) => StatefulBuilder(
               builder: (context, StateSetter setState) => CustomDialog(
-                heading: type == 'Add'
-                    ? 'Add to your watched tv series'
-                    : 'Edit tv series details',
+                heading: type == 'Add' ? 'Add to your watched tv series' : 'Edit tv series details',
                 child: Column(
                   children: [
                     CustomTextField(
@@ -317,8 +211,7 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                       },
                       onChanged: (val) {
                         setState(() {
-                          isTvSeriesExist =
-                              checkifExist(val.trim().toLowerCase());
+                          isTvSeriesExist = checkIfExist(val.trim().toLowerCase());
                           print(isTvSeriesExist);
                         });
                       },
@@ -328,10 +221,7 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                             alignment: Alignment.topLeft,
                             child: Text(
                               'This tv series already exists in the database',
-                              style: TextStyle(
-                                  color: Theme.of(context).errorColor,
-                                  fontFamily: fontMedium,
-                                  fontSize: textSizeSmall),
+                              style: TextStyle(color: Theme.of(context).errorColor, fontFamily: fontMedium, fontSize: textSizeSmall),
                             ),
                           )
                         : Container(),
@@ -365,11 +255,8 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                         ? Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              yearCheck,
-                              style: TextStyle(
-                                  color: Theme.of(context).errorColor,
-                                  fontFamily: fontRegular,
-                                  fontSize: textSizeSmall),
+                              yearCheck!,
+                              style: TextStyle(color: Theme.of(context).errorColor, fontFamily: fontRegular, fontSize: textSizeSmall),
                             ),
                           )
                         : Container()
@@ -379,46 +266,28 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                   if (!isTvSeriesExist) {
                     // values from the text controllers to add to the db (preparing this list for easy access)
                     var newTvSeriesDetails = [
-                      {
-                        'name': _tvSeriesNameController.text,
-                        'year': _tvSeriesYearController.text
-                      }
+                      {'name': _tvSeriesNameController.text, 'year': _tvSeriesYearController.text}
                     ];
                     if (type == 'Add') {
                       // if the dialog is to add tv series
-                      WatchedTvSeriesService(uid: user.uid)
-                          .addWatchedTvSeries(tvSeriesToAdd: newTvSeriesDetails)
-                          .then((value) {
-                        showToast(
-                            msg:
-                                '${_tvSeriesNameController.text} was added successfully!',
-                            backGroundColor: colorGreen);
+                      WatchedTvSeriesService(uid: user!.uid).addWatchedTvSeries(tvSeriesToAdd: newTvSeriesDetails).then((value) {
+                        showToast(msg: '${_tvSeriesNameController.text} was added successfully!', backGroundColor: colorGreen);
                         clear();
-                      }).onError((error, stackTrace) {
+                      }).onError((dynamic error, stackTrace) {
                         print(error);
                         print(stackTrace);
-                        showToast(
-                            msg: 'Something went wrong! \n Error - $error',
-                            backGroundColor: colorRed);
+                        showToast(msg: 'Something went wrong! \n Error - $error', backGroundColor: colorRed);
                       });
                     } else {
                       // if the dialog is to update tv series
-                      WatchedTvSeriesService(uid: user.uid)
-                          .updateTvSeriesDetails(
-                              tvSeriesToRemove: tvSeriesToRemove,
-                              tvSeriesToUpdate: newTvSeriesDetails)
-                          .then((value) {
-                        showToast(
-                            msg: 'Tv Series details were updated successfully!',
-                            backGroundColor: colorGreen);
+                      WatchedTvSeriesService(uid: user!.uid).updateTvSeriesDetails(tvSeriesToRemove: tvSeriesToRemove, tvSeriesToUpdate: newTvSeriesDetails).then((value) {
+                        showToast(msg: 'Tv Series details were updated successfully!', backGroundColor: colorGreen);
                         clear();
                         finish(context);
-                      }).onError((error, stackTrace) {
+                      }).onError((dynamic error, stackTrace) {
                         print(error);
                         print(stackTrace);
-                        showToast(
-                            msg: 'Something went wrong! \n Error - $error',
-                            backGroundColor: colorRed);
+                        showToast(msg: 'Something went wrong! \n Error - $error', backGroundColor: colorRed);
                       });
                     }
                   }
@@ -434,36 +303,26 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
     yearCheck = '';
     _tvSeriesNameController.clear();
     _tvSeriesYearController.clear();
-    tvSeries.forEach((element) {
-      tvSeriesNames.add(element['name'].toLowerCase());
-    });
+    tvSeries.forEach((element) => tvSeriesNames.add(element['name'].toLowerCase()));
   }
 
   // sorting the list
-  List sortList() {
+  List? sortList() {
     if (dropDownValue == 'Sort by Year ASC') {
-      tvSeries.sort((a, b) {
-        return a['year'].toString().compareTo(b['year'].toString());
-      });
+      tvSeries.sort((a, b) => a['year'].toString().compareTo(b['year'].toString()));
     } else if (dropDownValue == 'Sort by Year DESC') {
-      tvSeries.sort((a, b) {
-        return b['year'].toString().compareTo(a['year'].toString());
-      });
+      tvSeries.sort((a, b) => b['year'].toString().compareTo(a['year'].toString()));
     } else if (dropDownValue == 'Sort by Name DESC') {
-      tvSeries.sort((a, b) {
-        return b['name'].compareTo(a['name']);
-      });
+      tvSeries.sort((a, b) => b['name'].compareTo(a['name']));
     } else {
-      tvSeries.sort((a, b) {
-        return a['name'].compareTo(b['name']);
-      });
+      tvSeries.sort((a, b) => a['name'].compareTo(b['name']));
     }
 
     return tvSeries;
   }
 
   // check if the tv series exists
-  bool checkifExist(val) {
+  bool checkIfExist(val) {
     if (tvSeriesNames.contains(val)) {
       return true;
     }
@@ -471,7 +330,7 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
   }
 
   // check if the year is correct and between range
-  String checkYear(value) {
+  String? checkYear(value) {
     int year = int.parse(value);
 
     if (year < 1900) {

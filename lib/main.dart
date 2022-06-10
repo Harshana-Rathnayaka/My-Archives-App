@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         child: Consumer<ThemeNotifier>(builder: (context, ThemeNotifier notifier, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: notifier.isDark ? dark : light,
+            theme: notifier.isDark! ? dark : light,
             home: ChangeNotifierProvider(
               create: (_) => GoogleSignInProvider(),
               child: StreamBuilder(
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
                   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     final provider = Provider.of<GoogleSignInProvider>(context);
 
-                    if (provider.isSigningIn) {
+                    if (provider.isSigningIn!) {
                       return Scaffold(
                         body: Center(
                           child: CircularProgressIndicator(),

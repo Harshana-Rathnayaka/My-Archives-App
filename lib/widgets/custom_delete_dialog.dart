@@ -13,8 +13,8 @@ class CustomDeleteDialog extends StatefulWidget {
   final String item;
 
   CustomDeleteDialog({
-    @required this.onPressed,
-    @required this.item,
+    required this.onPressed,
+    required this.item,
   });
   @override
   _CustomDeleteDialogState createState() => _CustomDeleteDialogState();
@@ -44,7 +44,7 @@ class _CustomDeleteDialogState extends State<CustomDeleteDialog> {
                 height: 60.0,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: notifier.isDark
+                  color: notifier.isDark!
                       ? Theme.of(context).primaryColor
                       : Theme.of(context).appBarTheme.backgroundColor,
                   borderRadius: BorderRadius.only(

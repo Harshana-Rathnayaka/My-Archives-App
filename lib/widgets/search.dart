@@ -4,8 +4,8 @@ import '../constants/fonts.dart';
 import 'custom_no_records.dart';
 
 class Search extends SearchDelegate {
-  final List itemList;
-  Search({@required this.itemList});
+  final List? itemList;
+  Search({required this.itemList});
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -40,7 +40,7 @@ class Search extends SearchDelegate {
 
     // checking the typed value and building suggestions based on it
     // query is the typed value (comes from search delegate)
-    final suggestions = itemList.where((e) {
+    final suggestions = itemList!.where((e) {
       final itemLower = e['name'].toLowerCase();
       final queryLower = query.toLowerCase();
 

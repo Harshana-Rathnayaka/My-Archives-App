@@ -31,7 +31,7 @@ class _WatchlistState extends State<Watchlist> {
   final user = FirebaseAuth.instance.currentUser;
   var _stream;
 
-  getData() => _stream = FirebaseFirestore.instance.collection('watchlist').doc(user.uid).get();
+  getData() => _stream = FirebaseFirestore.instance.collection('watchlist').doc(user!.uid).get();
 
   @override
   void initState() {
@@ -61,12 +61,12 @@ class _WatchlistState extends State<Watchlist> {
                 return Center(child: Text("Something went wrong", style: TextStyle(fontFamily: fontRegular)));
               }
 
-              if (snapshot.hasData && !snapshot.data.exists) {
+              if (snapshot.hasData && !snapshot.data!.exists) {
                 return CustomNoRecords(text: 'Document does not exist');
               }
 
               if (snapshot.connectionState == ConnectionState.done) {
-                Map<String, dynamic> data = snapshot.data.data();
+                Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
                 return data['movies'] != null && data['movies'].length > 0
                     ? RefreshIndicator(
                         onRefresh: () async => getData(),
@@ -90,12 +90,12 @@ class _WatchlistState extends State<Watchlist> {
                 return Center(child: Text("Something went wrong", style: TextStyle(fontFamily: fontRegular)));
               }
 
-              if (snapshot.hasData && !snapshot.data.exists) {
+              if (snapshot.hasData && !snapshot.data!.exists) {
                 return CustomNoRecords(text: 'Document does not exist');
               }
 
               if (snapshot.connectionState == ConnectionState.done) {
-                Map<String, dynamic> data = snapshot.data.data();
+                Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
                 return data['tvSeries'] != null && data['tvSeries'].length > 0
                     ? RefreshIndicator(
                         onRefresh: () async => getData(),
@@ -116,10 +116,10 @@ class _WatchlistState extends State<Watchlist> {
         floatingActionButton: Consumer<ThemeNotifier>(
           builder: (context, notifier, child) => SpeedDial(
             child: Icon(Icons.add),
-            closedForegroundColor: notifier.isDark ? colorBlack : colorWhite,
+            closedForegroundColor: notifier.isDark! ? colorBlack : colorWhite,
             closedBackgroundColor: Theme.of(context).colorScheme.secondary,
             openForegroundColor: Theme.of(context).colorScheme.secondary,
-            openBackgroundColor: notifier.isDark ? colorBlack : colorWhite,
+            openBackgroundColor: notifier.isDark! ? colorBlack : colorWhite,
             labelsStyle: TextStyle(fontFamily: fontRegular, color: colorBlack, fontWeight: FontWeight.bold),
             speedDialChildren: <SpeedDialChild>[
               SpeedDialChild(
@@ -154,11 +154,11 @@ class _WatchlistState extends State<Watchlist> {
                               },
                             ),
                             onSave: () {
-                              WatchlistService(uid: user.uid).addToWatchlist(type: 'tvSeries', watchlistData: [_tvSeriesController.text]).then((value) {
+                              WatchlistService(uid: user!.uid).addToWatchlist(type: 'tvSeries', watchlistData: [_tvSeriesController.text]).then((value) {
                                 showToast(msg: 'Record saved successfully!', backGroundColor: colorGreen);
                                 _tvSeriesController.clear();
                                 getData();
-                              }).onError((error, stackTrace) {
+                              }).onError((dynamic error, stackTrace) {
                                 print(error);
                                 print(stackTrace);
                               });
@@ -194,11 +194,11 @@ class _WatchlistState extends State<Watchlist> {
                               },
                             ),
                             onSave: () {
-                              WatchlistService(uid: user.uid).addToWatchlist(type: 'movies', watchlistData: [_moviesController.text]).then((value) {
+                              WatchlistService(uid: user!.uid).addToWatchlist(type: 'movies', watchlistData: [_moviesController.text]).then((value) {
                                 showToast(msg: 'Record saved successfully!', backGroundColor: colorGreen);
                                 _moviesController.clear();
                                 getData();
-                              }).onError((error, stackTrace) {
+                              }).onError((dynamic error, stackTrace) {
                                 print(error);
                                 print(stackTrace);
                                 showToast(msg: 'Something went wrong! Error - $error', backGroundColor: colorRed);

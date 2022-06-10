@@ -16,7 +16,7 @@ class CustomTextField extends StatefulWidget {
   final maxLength;
   final maxLines;
   final validation;
-  final IconData icon;
+  final IconData? icon;
   final onChanged;
   final autofill;
   final onEditingComplete;
@@ -28,11 +28,11 @@ class CustomTextField extends StatefulWidget {
     this.isMultiline = false,
     this.isSecure = false,
     this.isEnabled = true,
-    @required this.controller,
-    @required this.hint,
+    required this.controller,
+    required this.hint,
     this.maxLength,
     this.maxLines = 1,
-    @required this.validation,
+    required this.validation,
     this.icon,
     this.onChanged,
     this.autofill,
