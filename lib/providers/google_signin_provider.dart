@@ -7,8 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class GoogleSignInProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
   final firebaseInstance = FirebaseAuth.instance;
-  final CollectionReference _usersCollection =
-      FirebaseFirestore.instance.collection('users');
+  final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
 
   bool? _isSigningIn;
 
@@ -34,12 +33,10 @@ class GoogleSignInProvider extends ChangeNotifier {
       return;
     } else {
       final googleAuth = await user.authentication;
-      final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+      final credential = GoogleAuthProvider.credential(accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
       // getting the result
-      final UserCredential authResult =
-          await firebaseInstance.signInWithCredential(credential);
+      final UserCredential authResult = await firebaseInstance.signInWithCredential(credential);
 
       // getting the logged in user from the result
       final User loggedInUser = authResult.user!;
@@ -52,12 +49,8 @@ class GoogleSignInProvider extends ChangeNotifier {
       createDocs(uid: loggedInUser.uid);
 
       // adding the user details to the users collection after login
-      addUser(uid: loggedInUser.uid, userData: {
-        "uid": loggedInUser.uid,
-        "name": loggedInUser.displayName,
-        "email": loggedInUser.email,
-        "photoURL": loggedInUser.photoURL
-      }).onError((dynamic error, stackTrace) {
+      addUser(uid: loggedInUser.uid, userData: {"uid": loggedInUser.uid, "name": loggedInUser.displayName, "email": loggedInUser.email, "photoURL": loggedInUser.photoURL})
+          .onError((dynamic error, stackTrace) {
         print('some error - $error');
         print(stackTrace);
       }).then((value) {
@@ -83,12 +76,9 @@ class GoogleSignInProvider extends ChangeNotifier {
   Future createDocs({uid}) async {
     print('checking doc availability');
 
-    final movieCollection =
-        FirebaseFirestore.instance.collection('watchedMovies');
-    final tvSeriesCollection =
-        FirebaseFirestore.instance.collection('watchedTvSeries');
-    final watchlistCollection =
-        FirebaseFirestore.instance.collection('watchlist');
+    final movieCollection = FirebaseFirestore.instance.collection('watchedMovies');
+    final tvSeriesCollection = FirebaseFirestore.instance.collection('watchedTvSeries');
+    final watchlistCollection = FirebaseFirestore.instance.collection('watchlist');
 
     // checking whether docs exist under this uid and creating a doc if it does not exist
     DocumentSnapshot movieDbDoc = await movieCollection.doc(uid).get();

@@ -4,8 +4,7 @@ class WatchlistService {
   final String? uid;
 
   WatchlistService({this.uid});
-  final CollectionReference _watchlistCollection =
-      FirebaseFirestore.instance.collection('watchlist');
+  final CollectionReference _watchlistCollection = FirebaseFirestore.instance.collection('watchlist');
 
   //  add watchlist to the db
   Future addToWatchlist({type, watchlistData}) async {
@@ -17,24 +16,16 @@ class WatchlistService {
     if (dbDoc.exists) {
       // if it exists --> the list will be updated
       if (type == 'movies') {
-        await _watchlistCollection
-            .doc(uid)
-            .update({"movies": FieldValue.arrayUnion(watchlistData)});
+        await _watchlistCollection.doc(uid).update({"movies": FieldValue.arrayUnion(watchlistData)});
       } else {
-        await _watchlistCollection
-            .doc(uid)
-            .update({"tvSeries": FieldValue.arrayUnion(watchlistData)});
+        await _watchlistCollection.doc(uid).update({"tvSeries": FieldValue.arrayUnion(watchlistData)});
       }
     } else {
       // if it does not exist --> the list will be created
       if (type == 'movies') {
-        await _watchlistCollection
-            .doc(uid)
-            .set({"movies": FieldValue.arrayUnion(watchlistData)});
+        await _watchlistCollection.doc(uid).set({"movies": FieldValue.arrayUnion(watchlistData)});
       } else {
-        await _watchlistCollection
-            .doc(uid)
-            .set({"tvSeries": FieldValue.arrayUnion(watchlistData)});
+        await _watchlistCollection.doc(uid).set({"tvSeries": FieldValue.arrayUnion(watchlistData)});
       }
     }
   }

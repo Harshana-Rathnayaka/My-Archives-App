@@ -5,16 +5,11 @@ class WatchedTvSeriesService {
 
   WatchedTvSeriesService({this.uid});
 
-  final tvSeriesCollection =
-      FirebaseFirestore.instance.collection('watchedTvSeries');
+  final tvSeriesCollection = FirebaseFirestore.instance.collection('watchedTvSeries');
 
 // getting the watched tv series collection
-  Stream<DocumentSnapshot<Map<String, dynamic>>>
-      getWatchedTvSeriesCollection() {
-    return FirebaseFirestore.instance
-        .collection('watchedTvSeries')
-        .doc(uid)
-        .snapshots();
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getWatchedTvSeriesCollection() {
+    return FirebaseFirestore.instance.collection('watchedTvSeries').doc(uid).snapshots();
   }
 
 // add to watched tv series collection
@@ -25,20 +20,14 @@ class WatchedTvSeriesService {
     DocumentSnapshot dbDoc = await tvSeriesCollection.doc(uid).get();
 
     if (!dbDoc.exists) {
-      return await tvSeriesCollection
-          .doc(uid)
-          .set({"tvSeries": FieldValue.arrayUnion(tvSeriesToAdd!)});
+      return await tvSeriesCollection.doc(uid).set({"tvSeries": FieldValue.arrayUnion(tvSeriesToAdd!)});
     }
 
-    return await tvSeriesCollection
-        .doc(uid)
-        .update({"tvSeries": FieldValue.arrayUnion(tvSeriesToAdd!)});
+    return await tvSeriesCollection.doc(uid).update({"tvSeries": FieldValue.arrayUnion(tvSeriesToAdd!)});
   }
 
 // updating tv series details
-  Future updateTvSeriesDetails(
-      {required List<Map<String, dynamic>> tvSeriesToRemove,
-      List<Map<String, dynamic>>? tvSeriesToUpdate}) async {
+  Future updateTvSeriesDetails({required List<Map<String, dynamic>> tvSeriesToRemove, List<Map<String, dynamic>>? tvSeriesToUpdate}) async {
     print('updating');
     print(tvSeriesToRemove);
     print(tvSeriesToUpdate);
@@ -47,9 +36,7 @@ class WatchedTvSeriesService {
     return await tvSeriesCollection
         .doc(uid)
         .update({"tvSeries": FieldValue.arrayRemove(tvSeriesToRemove)})
-        .then((value) => tvSeriesCollection
-            .doc(uid)
-            .update({"tvSeries": FieldValue.arrayUnion(tvSeriesToUpdate!)}))
+        .then((value) => tvSeriesCollection.doc(uid).update({"tvSeries": FieldValue.arrayUnion(tvSeriesToUpdate!)}))
         .then((value) => print('after adding'));
   }
 
@@ -58,8 +45,6 @@ class WatchedTvSeriesService {
     print('deleting');
     print(data);
 
-    return await tvSeriesCollection
-        .doc(uid)
-        .update({"tvSeries": FieldValue.arrayRemove(data)});
+    return await tvSeriesCollection.doc(uid).update({"tvSeries": FieldValue.arrayRemove(data)});
   }
 }

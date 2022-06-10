@@ -42,27 +42,21 @@ class _DashboardState extends State<Dashboard> {
                   title: 'MOVIES',
                   description: 'All the movies that you have watched',
                   tooltip: 'Watched movies',
-                  onPressed: () {
-                    launchScreen(context, WatchedMovies.tag);
-                  },
+                  onPressed: () => launchScreen(context, WatchedMovies.tag),
                 ),
                 DashboardCard(
                   displayIcon: Icons.live_tv,
                   title: 'TV SERIES',
                   description: 'All the tv series that you have watched',
                   tooltip: 'Watched tv series',
-                  onPressed: () {
-                    launchScreen(context, WatchedTvSeries.tag);
-                  },
+                  onPressed: () => launchScreen(context, WatchedTvSeries.tag),
                 ),
                 DashboardCard(
                   displayIcon: Icons.bookmark,
                   title: 'WATCHLIST',
                   description: 'All the movies and tv series that you want to watch',
                   tooltip: 'Movies and tv series to watch',
-                  onPressed: () {
-                    launchScreen(context, Watchlist.tag);
-                  },
+                  onPressed: () => launchScreen(context, Watchlist.tag),
                 ),
                 DashboardCard(
                   displayIcon: Icons.location_pin,

@@ -65,10 +65,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
         border: InputBorder.none,
         suffixIcon: widget.isSecure
             ? GestureDetector(
-                onTap: () {
-                  setState(() => widget.isPassword = !widget.isPassword);
-                },
-                child: Icon(widget.isPassword ? Icons.visibility : Icons.visibility_off))
+                onTap: () => setState(() => widget.isPassword = !widget.isPassword),
+                child: Icon(widget.isPassword ? Icons.visibility : Icons.visibility_off),
+              )
             : null,
         prefixIcon: widget.icon != null ? Icon(widget.icon) : null,
         hintText: widget.hint,

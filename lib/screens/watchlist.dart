@@ -31,8 +31,6 @@ class _WatchlistState extends State<Watchlist> {
   final user = FirebaseAuth.instance.currentUser;
   var _stream;
 
-  getData() => _stream = FirebaseFirestore.instance.collection('watchlist').doc(user!.uid).get();
-
   @override
   void initState() {
     getData();
@@ -72,9 +70,7 @@ class _WatchlistState extends State<Watchlist> {
                         onRefresh: () async => getData(),
                         child: ListView.builder(
                           itemCount: data['movies'].length,
-                          itemBuilder: (context, index) {
-                            return ListTile(title: Text(data['movies'][index]));
-                          },
+                          itemBuilder: (context, index) => ListTile(title: Text(data['movies'][index])),
                         ),
                       )
                     : CustomNoRecords(text: 'No data available');
@@ -101,9 +97,7 @@ class _WatchlistState extends State<Watchlist> {
                         onRefresh: () async => getData(),
                         child: ListView.builder(
                           itemCount: data['tvSeries'].length,
-                          itemBuilder: (context, index) {
-                            return ListTile(title: Text(data['tvSeries'][index]));
-                          },
+                          itemBuilder: (context, index) => ListTile(title: Text(data['tvSeries'][index])),
                         ),
                       )
                     : CustomNoRecords(text: 'No data available');
@@ -215,4 +209,7 @@ class _WatchlistState extends State<Watchlist> {
       ),
     );
   }
+
+// get data method
+  getData() => _stream = FirebaseFirestore.instance.collection('watchlist').doc(user!.uid).get();
 }

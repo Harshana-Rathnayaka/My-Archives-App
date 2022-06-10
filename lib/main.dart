@@ -41,11 +41,7 @@ class MyApp extends StatelessWidget {
                     final provider = Provider.of<GoogleSignInProvider>(context);
 
                     if (provider.isSigningIn!) {
-                      return Scaffold(
-                        body: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
+                      return Scaffold(body: Center(child: CircularProgressIndicator()));
                     } else if (snapshot.hasData) {
                       return Dashboard();
                     } else {

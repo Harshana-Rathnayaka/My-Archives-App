@@ -41,17 +41,13 @@ class _LoginState extends State<Login> {
             Spacer(),
             GestureDetector(
               onTap: () {
-                if (connectionStatus != ConnectivityStatus.Offline) {
-                  provider.login();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(customSnackbar(icon: Icons.cloud_off, iconColor: colorRed, text: 'No internet connection!'));
-                }
+                connectionStatus != ConnectivityStatus.Offline
+                    ? provider.login()
+                    : ScaffoldMessenger.of(context).showSnackBar(customSnackbar(icon: Icons.cloud_off, iconColor: colorRed, text: 'No internet connection!'));
               },
               child: Card(
                 color: connectionStatus != ConnectivityStatus.Offline ? Theme.of(context).cardColor : Colors.grey[400],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                 elevation: connectionStatus != ConnectivityStatus.Offline ? 16.0 : 0.0,
                 margin: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Padding(
@@ -59,16 +55,9 @@ class _LoginState extends State<Login> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset(
-                        google,
-                        width: 30.0,
-                        height: 30.0,
-                      ),
+                      SvgPicture.asset(google, width: 30.0, height: 30.0),
                       SizedBox(width: 20.0),
-                      Text(
-                        'Continue with Google',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontFamily: fontRegular, fontSize: textSizeLargeMedium),
-                      ),
+                      Text('Continue with Google', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: fontRegular, fontSize: textSizeLargeMedium)),
                     ],
                   ),
                 ),

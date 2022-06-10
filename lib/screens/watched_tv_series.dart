@@ -138,29 +138,17 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                                   return false;
                                 },
                                 child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(color: Colors.grey, width: 0.5),
-                                    ),
-                                  ),
+                                  decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5))),
                                   child: ListTile(
                                     enableFeedback: true,
-                                    title: Text(
-                                      tvSeries[index]['name'],
-                                      style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold),
-                                    ),
-                                    subtitle: Text(
-                                      tvSeries[index]['year'].toString(),
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontFamily: fontMedium),
-                                    ),
+                                    title: Text(tvSeries[index]['name'], style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold)),
+                                    subtitle: Text(tvSeries[index]['year'].toString(), style: TextStyle(fontWeight: FontWeight.bold, fontFamily: fontMedium)),
                                     trailing: IconButton(
                                       enableFeedback: true,
                                       iconSize: 20,
                                       tooltip: 'Edit tv series details',
                                       icon: Icon(Icons.edit),
                                       onPressed: () {
-                                        print(tvSeries[index]);
-
                                         var tvSeriesName = tvSeries[index]['name'];
                                         var tvSeriesYear = tvSeries[index]['year'].toString();
 
@@ -170,9 +158,7 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                                         tvSeriesToRemove = [
                                           {'name': tvSeriesName, 'year': tvSeriesYear}
                                         ];
-                                        showTvSeriesDialog(context, type: 'Update').whenComplete(() {
-                                          clear();
-                                        });
+                                        showTvSeriesDialog(context, type: 'Update').whenComplete(() => clear());
                                       },
                                     ),
                                   ),
@@ -209,20 +195,12 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                         }
                         return null;
                       },
-                      onChanged: (val) {
-                        setState(() {
-                          isTvSeriesExist = checkIfExist(val.trim().toLowerCase());
-                          print(isTvSeriesExist);
-                        });
-                      },
+                      onChanged: (val) => setState(() => isTvSeriesExist = checkIfExist(val.trim().toLowerCase())),
                     ),
                     isTvSeriesExist
                         ? Align(
                             alignment: Alignment.topLeft,
-                            child: Text(
-                              'This tv series already exists in the database',
-                              style: TextStyle(color: Theme.of(context).errorColor, fontFamily: fontMedium, fontSize: textSizeSmall),
-                            ),
+                            child: Text('This tv series already exists in the database', style: TextStyle(color: Theme.of(context).errorColor, fontFamily: fontMedium, fontSize: textSizeSmall)),
                           )
                         : Container(),
                     SizedBox(height: 16.0),
@@ -241,24 +219,14 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
                       },
                       onChanged: (val) {
                         if (val.trim().isNotEmpty) {
-                          setState(() {
-                            yearCheck = checkYear(val.trim());
-                          });
+                          setState(() => yearCheck = checkYear(val.trim()));
                         } else if (val.trim().isEmpty) {
-                          setState(() {
-                            yearCheck = null;
-                          });
+                          setState(() => yearCheck = null);
                         }
                       },
                     ),
                     yearCheck != null
-                        ? Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              yearCheck!,
-                              style: TextStyle(color: Theme.of(context).errorColor, fontFamily: fontRegular, fontSize: textSizeSmall),
-                            ),
-                          )
+                        ? Align(alignment: Alignment.topLeft, child: Text(yearCheck!, style: TextStyle(color: Theme.of(context).errorColor, fontFamily: fontRegular, fontSize: textSizeSmall)))
                         : Container()
                   ],
                 ),

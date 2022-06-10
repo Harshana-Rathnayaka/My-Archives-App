@@ -40,13 +40,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         width: 50,
                         height: 50,
                         imageUrl: user!.photoURL!,
+                        placeholder: (context, url) => new Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => new Icon(Icons.error, size: 26),
                         imageBuilder: (context, imageProvider) => Container(
                           width: 80.0,
                           height: 80.0,
                           decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
                         ),
-                        placeholder: (context, url) => new Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => new Icon(Icons.error, size: 26),
                       ),
                     ),
                     Expanded(

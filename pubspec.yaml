@@ -45,9 +45,9 @@ flutter:
       fonts:
         - asset: fonts/Montserrat-Medium.ttf
 
-    - family: Semibold
+    - family: SemiBold
       fonts:
-        - asset: fonts/Montserrat-Semibold.ttf
+        - asset: fonts/Montserrat-SemiBold.ttf
 
     - family: Bold
       fonts:
