@@ -7,12 +7,12 @@ import 'package:provider/provider.dart';
 import 'components/connectivity_status.dart';
 import 'components/theme.dart';
 import 'providers/google_signin_provider.dart';
-import '/screens/dashboard.dart';
-import '/screens/login.dart';
-import '/screens/watched_movies.dart';
-import '/screens/watched_tv_series.dart';
-import '/screens/watchlist.dart';
-import '/services/connectivity_service.dart';
+import 'screens/dashboard.dart';
+import 'screens/login.dart';
+import 'screens/watched_movies.dart';
+import 'screens/watched_tv_series.dart';
+import 'screens/watchlist.dart';
+import 'services/connectivity_service.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
