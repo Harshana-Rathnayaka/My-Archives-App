@@ -35,7 +35,7 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
 
   @override
   Widget build(BuildContext context) {
-    return (Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: AppBarTitle(title: 'Watched Tv Series'),
         centerTitle: true,
@@ -173,7 +173,7 @@ class _WatchedTvSeriesState extends State<WatchedTvSeries> {
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: () => showTvSeriesDialog(context, type: 'Add').whenComplete(() => clear())),
-    ));
+    );
   }
 
   Future showTvSeriesDialog(BuildContext context, {required String type}) {

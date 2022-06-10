@@ -35,7 +35,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
 
   @override
   Widget build(BuildContext context) {
-    return (Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: AppBarTitle(title: 'Watched Movies'),
         centerTitle: true,
@@ -174,7 +174,7 @@ class _WatchedMoviesState extends State<WatchedMovies> {
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: () => showMovieDialog(context, type: 'Add').whenComplete(() => clear())),
-    ));
+    );
   }
 
   Future showMovieDialog(BuildContext context, {required String type}) {
