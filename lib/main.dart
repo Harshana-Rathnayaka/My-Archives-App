@@ -25,25 +25,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        StreamProvider<ConnectivityStatus>.value(
-          value: ConnectivityService().connectionStatusController.stream,
-          initialData: ConnectivityStatus.Offline,
-        ),
+        StreamProvider<ConnectivityStatus>.value(value: ConnectivityService().connectionStatusController.stream, initialData: ConnectivityStatus.Offline),
       ],
       child: ChangeNotifierProvider(
         create: (_) => ThemeNotifier(),
-        child: Consumer<ThemeNotifier>(
-            builder: (context, ThemeNotifier notifier, child) {
+        child: Consumer<ThemeNotifier>(builder: (context, ThemeNotifier notifier, child) {
           return MaterialApp(
-            title: 'Flutter Demo',
             debugShowCheckedModeBanner: false,
             theme: notifier.isDark ? dark : light,
             home: ChangeNotifierProvider(
               create: (_) => GoogleSignInProvider(),
               child: StreamBuilder(
                   stream: FirebaseAuth.instance.authStateChanges(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     final provider = Provider.of<GoogleSignInProvider>(context);
 
                     if (provider.isSigningIn) {
