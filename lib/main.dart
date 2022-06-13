@@ -7,6 +7,9 @@ import 'package:provider/provider.dart';
 import 'components/connectivity_status.dart';
 import 'components/theme.dart';
 import 'providers/google_signin_provider.dart';
+import 'screens/features/toys/add_new_toy.dart';
+import 'screens/features/toys/toy_collection.dart';
+import 'screens/features/toys/toy_details.dart';
 import 'screens/dashboard.dart';
 import 'screens/login.dart';
 import 'screens/watched_movies.dart';
@@ -55,6 +58,9 @@ class MyApp extends StatelessWidget {
               Watchlist.tag: (BuildContext context) => Watchlist(),
               WatchedMovies.tag: (BuildContext context) => WatchedMovies(),
               WatchedTvSeries.tag: (BuildContext context) => WatchedTvSeries(),
+              ToyCollection.tag: (BuildContext context) => ToyCollection(),
+              AddNewToy.tag: (BuildContext context) => AddNewToy(),
+              ToyDetails.tag: (BuildContext context) => ToyDetails(),
             },
           );
         }),

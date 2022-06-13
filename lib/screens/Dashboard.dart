@@ -6,6 +6,7 @@ import '../utils/helper_methods.dart';
 import '../widgets/custom_drawer.dart';
 import '../widgets/dashboard_card.dart';
 import '../widgets/helper_widgets.dart';
+import 'features/toys/toy_collection.dart';
 import 'watched_movies.dart';
 import 'watched_tv_series.dart';
 import 'watchlist.dart';
@@ -17,11 +18,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   final user = FirebaseAuth.instance.currentUser;
 
   @override
@@ -71,6 +67,13 @@ class _DashboardState extends State<Dashboard> {
                   description: 'All of your monthly expenses (Coming soon)',
                   tooltip: 'Monthly expenses',
                   onPressed: () {},
+                ),
+                DashboardCard(
+                  displayIcon: Icons.toys,
+                  title: 'TOYS',
+                  description: 'All the scale car models you have collected',
+                  tooltip: 'Monthly expenses',
+                  onPressed: () => launchScreen(context, ToyCollection.tag),
                 ),
               ],
             ),
