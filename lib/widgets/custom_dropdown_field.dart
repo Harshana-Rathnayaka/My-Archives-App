@@ -36,28 +36,31 @@ class CustomDropDownField extends StatefulWidget {
 class _CustomDropDownFieldState extends State<CustomDropDownField> {
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField(
-      value: widget.selectedValue,
-      items: widget.items,
-      validator: widget.validation,
-      onChanged: widget.onChanged,
-      onTap: widget.onTap,
-      isExpanded: widget.isExpanded,
-      isDense: widget.isDense,
-      decoration: InputDecoration(
-        enabled: widget.isEnabled,
-        filled: widget.isFilled,
-        labelText: widget.hint,
-        hintText: widget.hint,
-        errorMaxLines: 2,
-        contentPadding: EdgeInsets.fromLTRB(16, 10, 16, 10),
-        border: InputBorder.none,
-        errorStyle: TextStyle(fontFamily: fontMedium, fontSize: textSizeSmall),
-        disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: BorderSide(color: hintColor, width: 1.0)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1.0)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1.0)),
-        errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: BorderSide(color: Theme.of(context).errorColor, width: 1)),
-        focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: BorderSide(color: Theme.of(context).errorColor, width: 1)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: DropdownButtonFormField(
+        value: widget.selectedValue,
+        items: widget.items,
+        validator: widget.validation,
+        onChanged: widget.onChanged,
+        onTap: widget.onTap,
+        isExpanded: widget.isExpanded,
+        isDense: widget.isDense,
+        decoration: InputDecoration(
+          enabled: widget.isEnabled,
+          filled: widget.isFilled,
+          labelText: widget.hint,
+          hintText: widget.hint,
+          errorMaxLines: 2,
+          contentPadding: EdgeInsets.fromLTRB(16, 10, 16, 10),
+          border: InputBorder.none,
+          errorStyle: TextStyle(fontFamily: fontMedium, fontSize: textSizeSmall),
+          disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: BorderSide(color: hintColor, width: 1.0)),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1.0)),
+          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1.0)),
+          errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: BorderSide(color: Theme.of(context).errorColor, width: 1)),
+          focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: BorderSide(color: Theme.of(context).errorColor, width: 1)),
+        ),
       ),
     );
   }
