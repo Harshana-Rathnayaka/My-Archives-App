@@ -76,16 +76,17 @@ jobs:
         with:
           flutter-version: "2.10.x"
           channel: "stable"
+          cache: true
+          cache-key: flutter # optional, change this to force refresh cache
+          cache-path: ${{ runner.tool_cache }}/flutter # optional, change this to specify the cache path
+          architecture: x64 # optional, x64 or arm64
 
-      - name: Flutter doctor
-        run: flutter doctor -v
-
-      # - name: Cache pub dependencies
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: ${{ env.FLUTTER_HOME }}/.pub-cache
-      #     key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-      #     restore-keys: ${{ runner.os }}-pub-
+      - name: Cache pub dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.FLUTTER_HOME }}/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
 
       - name: Download pub dependencies
         run: flutter pub get
@@ -93,18 +94,18 @@ jobs:
       - name: Flutter Analyze
         run: flutter analyze
 
-      # # building the APK
-      # - name: Build APK
-      #   run: flutter build apk --release
+      # building the APK
+      - name: Build APK
+        run: flutter build apk --release
 
-      # # building the Appbundle
-      # - name: Build Android Appbundle
-      #   run: flutter build appbundle
+      # building the Appbundle
+      - name: Build Android Appbundle
+        run: flutter build appbundle
 
-      # # release and upload to github
-      # - name: Create a Release in GitHub
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     artifacts: "build/app/outputs/apk/release/*.apk,build/app/outputs/bundle/release/app-release.aab"
-      #     token: ${{ secrets.TOKEN }}
-      #     commit: ${{ github.sha }}
+      # release and upload to github
+      - name: Create a Release in GitHub
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/apk/release/*.apk,build/app/outputs/bundle/release/app-release.aab"
+          token: ${{ secrets.TOKEN }}
+          commit: ${{ github.sha }}
