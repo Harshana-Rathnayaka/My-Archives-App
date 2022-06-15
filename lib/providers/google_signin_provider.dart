@@ -1,4 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,73 +11,52 @@ class GoogleSignInProvider extends ChangeNotifier {
   final firebaseInstance = FirebaseAuth.instance;
   final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
 
-  bool? _isSigningIn;
+  GoogleSignInAccount? _user;
+  GoogleSignInAccount get user => _user!;
 
-  GoogleSignInProvider() {
-    _isSigningIn = false;
-  }
+  // login method
+  Future googleLogin() async {
+    try {
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-  bool? get isSigningIn => _isSigningIn;
+      if (googleUser == null) return;
 
-  set isSigningIn(bool? isSigningIn) {
-    _isSigningIn = isSigningIn;
+      _user = googleUser;
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final OAuthCredential credential = GoogleAuthProvider.credential(accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+      final UserCredential authResult = await firebaseInstance.signInWithCredential(credential);
+      final User loggedInUser = authResult.user!;
+
+      // after login (create documents and add user details to db)
+      createDocs(uid: loggedInUser.uid);
+      addUser(uid: loggedInUser.uid, userData: {
+        "uid": loggedInUser.uid,
+        "name": loggedInUser.displayName,
+        "email": loggedInUser.email,
+        "photoURL": loggedInUser.photoURL,
+      }).onError((dynamic error, stackTrace) {
+        log('some error - $error');
+        log(stackTrace.toString());
+      });
+    } catch (e) {
+      log(e.toString());
+    }
+
     notifyListeners();
   }
 
-  // login method
-  Future login() async {
-    isSigningIn = true;
-
-    final user = await googleSignIn.signIn();
-
-    if (user == null) {
-      isSigningIn = false;
-      return;
-    } else {
-      final googleAuth = await user.authentication;
-      final credential = GoogleAuthProvider.credential(accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
-
-      // getting the result
-      final UserCredential authResult = await firebaseInstance.signInWithCredential(credential);
-
-      // getting the logged in user from the result
-      final User loggedInUser = authResult.user!;
-
-      print(loggedInUser.uid);
-      print(loggedInUser.displayName);
-      print(loggedInUser.email);
-
-      // creating docs for the user in other collections
-      createDocs(uid: loggedInUser.uid);
-
-      // adding the user details to the users collection after login
-      addUser(uid: loggedInUser.uid, userData: {"uid": loggedInUser.uid, "name": loggedInUser.displayName, "email": loggedInUser.email, "photoURL": loggedInUser.photoURL})
-          .onError((dynamic error, stackTrace) {
-        print('some error - $error');
-        print(stackTrace);
-      }).then((value) {
-        print('success $value');
-      });
-
-      isSigningIn = false;
-    }
-  }
-
   // logout method
-  void logout() async {
+  Future logout() async {
     await googleSignIn.disconnect();
     firebaseInstance.signOut();
   }
 
   // add user details to firestore
-  Future addUser({uid, userData}) async {
-    await _usersCollection.doc(uid).set(userData);
-  }
+  Future addUser({uid, userData}) async => await _usersCollection.doc(uid).set(userData);
 
   // create docs with uid in other collections (only if it does not exist)
   Future createDocs({uid}) async {
-    print('checking doc availability');
-
     final movieCollection = FirebaseFirestore.instance.collection('watchedMovies');
     final tvSeriesCollection = FirebaseFirestore.instance.collection('watchedTvSeries');
     final watchlistCollection = FirebaseFirestore.instance.collection('watchlist');
@@ -85,25 +66,10 @@ class GoogleSignInProvider extends ChangeNotifier {
     DocumentSnapshot tvSeriesDoc = await tvSeriesCollection.doc(uid).get();
     DocumentSnapshot watchlistDbDoc = await watchlistCollection.doc(uid).get();
 
-    if (movieDbDoc.exists) {
-      print('doc exists in watchedMovies');
-    } else {
-      print('creating doc in watchedMovies');
-      await movieCollection.doc(uid).set({"movies": []});
-    }
+    if (!movieDbDoc.exists) await movieCollection.doc(uid).set({"movies": []});
 
-    if (tvSeriesDoc.exists) {
-      print('doc exists in watchedTvSeries');
-    } else {
-      print('creating doc in watchedTvSeries');
-      await tvSeriesCollection.doc(uid).set({"tvSeries": []});
-    }
+    if (!tvSeriesDoc.exists) await tvSeriesCollection.doc(uid).set({"tvSeries": []});
 
-    if (watchlistDbDoc.exists) {
-      print('doc exists in watchlist');
-    } else {
-      print('creating doc in watchlist');
-      await watchlistCollection.doc(uid).set({"movies": [], "tvSeries": []});
-    }
+    if (!watchlistDbDoc.exists) await watchlistCollection.doc(uid).set({"movies": [], "tvSeries": []});
   }
 }
