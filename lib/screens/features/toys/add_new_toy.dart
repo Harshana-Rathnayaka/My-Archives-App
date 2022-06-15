@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:my_archive/widgets/custom_dropdown_field.dart';
-import 'package:my_archive/widgets/custom_textfield.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../../components/connectivity_status.dart';
@@ -10,6 +7,8 @@ import '../../../constants/colors.dart';
 import '../../../constants/fonts.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_date_picker.dart';
+import '../../../widgets/custom_dropdown_field.dart';
+import '../../../widgets/custom_textfield.dart';
 import '../../../widgets/helper_widgets.dart';
 
 class AddNewToy extends StatefulWidget {
@@ -114,9 +113,7 @@ class _AddNewToyState extends State<AddNewToy> {
                         btnColor: colorGreen,
                         onTap: connectionStatus != ConnectivityStatus.Offline
                             ? () {
-                                if (_formKey.currentState!.validate()) {
-                                  log('ok');
-                                }
+                                if (_formKey.currentState!.validate()) {}
                               }
                             : null,
                       ),
