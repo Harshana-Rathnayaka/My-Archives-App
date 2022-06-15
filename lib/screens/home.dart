@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'dashboard.dart';
+// import 'dashboard.dart';
 import 'login.dart';
 
 class Home extends StatelessWidget {
@@ -17,7 +17,7 @@ class Home extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasData) {
-            return Dashboard();
+            return Login();
           } else if (snapshot.hasError) {
             return Center(child: Text('Something went wrong.'));
           } else {

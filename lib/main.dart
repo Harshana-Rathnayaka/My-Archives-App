@@ -9,7 +9,7 @@ import 'providers/google_signin_provider.dart';
 import 'screens/features/toys/add_new_toy.dart';
 import 'screens/features/toys/toy_collection.dart';
 import 'screens/features/toys/toy_details.dart';
-import 'screens/dashboard.dart';
+// import 'screens/dashboard.dart';
 import 'screens/home.dart';
 import 'screens/login.dart';
 import 'screens/watched_movies.dart';
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
           home: Home(),
           routes: <String, WidgetBuilder>{
             Login.tag: (BuildContext context) => Login(),
-            Dashboard.tag: (BuildContext context) => Dashboard(),
+            // Dashboard.tag: (BuildContext context) => Dashboard(),
             Watchlist.tag: (BuildContext context) => Watchlist(),
             WatchedMovies.tag: (BuildContext context) => WatchedMovies(),
             WatchedTvSeries.tag: (BuildContext context) => WatchedTvSeries(),
