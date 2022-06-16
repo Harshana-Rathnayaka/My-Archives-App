@@ -94,13 +94,15 @@ class _AddNewToyState extends State<AddNewToy> {
                   validation: (String? val) => val == null ? 'Brand is required' : null,
                   onChanged: (val) => setState(() => selectedBrand = val),
                 ),
-                CustomDropDownField(
-                  isEnabled: selectedBrand == 'Hot Wheels',
-                  hint: 'Type',
-                  items: type.map((value) => DropdownMenuItem<String>(value: value, child: Text(value, style: TextStyle(fontFamily: fontMedium, fontSize: 14)))).toList(),
-                  selectedValue: selectedType,
-                  validation: (String? val) => selectedBrand == 'Hot Wheels' && val == null ? 'Type is required' : null,
-                  onChanged: (val) => setState(() => selectedType = val),
+                Visibility(
+                  visible: selectedBrand == 'Hot Wheels',
+                  child: CustomDropDownField(
+                    hint: 'Type',
+                    items: type.map((value) => DropdownMenuItem<String>(value: value, child: Text(value, style: TextStyle(fontFamily: fontMedium, fontSize: 14)))).toList(),
+                    selectedValue: selectedType,
+                    validation: (String? val) => selectedBrand == 'Hot Wheels' && val == null ? 'Type is required' : null,
+                    onChanged: (val) => setState(() => selectedType = val),
+                  ),
                 ),
                 CustomDatePicker(hint: 'Year', controller: _year, validation: (String? val) => val == '' ? 'Year is required' : null),
                 CustomTextField(controller: _cardNumber, hint: 'Card Number (Front)', validation: (String? val) => val!.isEmpty ? 'Card number is required' : null, isNumber: true),
