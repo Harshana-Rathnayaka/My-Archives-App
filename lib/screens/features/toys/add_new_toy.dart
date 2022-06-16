@@ -80,7 +80,7 @@ class _AddNewToyState extends State<AddNewToy> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               IconButton(onPressed: () {}, icon: Icon(Icons.camera_alt), iconSize: 30),
-                              GestureDetector(child: Text('or \n select from gallery', textAlign: TextAlign.center, style: TextStyle(fontSize: 12))),
+                              GestureDetector(child: Text('or \n select from gallery', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontFamily: fontMedium))),
                             ],
                           ),
                         );
