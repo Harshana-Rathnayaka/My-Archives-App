@@ -1,8 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../../components/connectivity_status.dart';
@@ -33,7 +35,9 @@ class _AddNewToyState extends State<AddNewToy> {
   MoneyMaskedTextController _price = MoneyMaskedTextController(initialValue: 0.00, decimalSeparator: '.', leftSymbol: 'Rs. ', thousandSeparator: ',');
 
   late Size size;
-  late List? images;
+  List imageList = [
+    {"name": "placeholder", "url": ""}
+  ];
   List<String> brands = ['Hot Wheels', 'Matchbox', 'Tarmac Works', 'Mini GT'];
   List<String> type = ['Basic (Mainline)', 'Premium'];
   String? selectedBrand;
@@ -68,22 +72,55 @@ class _AddNewToyState extends State<AddNewToy> {
                 Container(
                   height: size.width / 2.5,
                   child: GridView.builder(
-                      itemCount: 1,
+                      itemCount: imageList.length,
                       scrollDirection: Axis.horizontal,
                       shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, mainAxisSpacing: 0, mainAxisExtent: size.width - 20),
+                      physics: BouncingScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, mainAxisSpacing: 0, mainAxisExtent: imageList.length <= 1 ? size.width - 20 : null),
                       itemBuilder: (context, index) {
-                        return Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(border: Border.all(color: Theme.of(context).colorScheme.secondary, width: 0.5)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(onPressed: () {}, icon: Icon(Icons.camera_alt), iconSize: 30),
-                              GestureDetector(child: Text('or \n select from gallery', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontFamily: fontMedium))),
-                            ],
-                          ),
-                        );
+                        return index != 0
+                            ? Card(
+                                elevation: 2,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                child: Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(4.0),
+                                      child: Image.file(
+                                        File(imageList[index]['url']),
+                                        width: double.infinity,
+                                        fit: BoxFit.fill,
+                                        errorBuilder: (context, url, error) => Center(child: new Icon(Icons.error, size: 40, color: colorRed)),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 10,
+                                      right: 10,
+                                      child: Container(
+                                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                                        child: InkWell(
+                                          onTap: () => setState(() => imageList.removeAt(index)),
+                                          child: Icon(Icons.cancel, size: 24, color: colorRed),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            : Card(
+                                elevation: 2,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(onPressed: () => captureImage(), icon: Icon(Icons.camera_alt), iconSize: 30),
+                                    GestureDetector(
+                                      onTap: () => captureImage(false),
+                                      child: Text('or \n select from gallery', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontFamily: fontMedium)),
+                                    ),
+                                  ],
+                                ),
+                              );
                       }),
                 ),
                 SizedBox(height: 12),
@@ -141,5 +178,15 @@ class _AddNewToyState extends State<AddNewToy> {
         ),
       ),
     );
+  }
+
+  Future captureImage([bool isCamera = true]) async {
+    if (isCamera) {
+      XFile? image = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 100);
+      if (image != null) this.setState(() => imageList.add({"name": image.name, "url": image.path}));
+    } else {
+      List<XFile>? images = await ImagePicker().pickMultiImage();
+      if (images != null) this.setState(() => images.forEach((element) => imageList.add({"name": element.name, "url": element.path})));
+    }
   }
 }
