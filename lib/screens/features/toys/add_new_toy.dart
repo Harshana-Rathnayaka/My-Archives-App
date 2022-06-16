@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:provider/provider.dart';
 
 import '../../../components/connectivity_status.dart';
@@ -23,10 +26,11 @@ class AddNewToy extends StatefulWidget {
 class _AddNewToyState extends State<AddNewToy> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _year = TextEditingController();
-  TextEditingController _cardNumber = TextEditingController();
+  MaskedTextController _cardNumber = MaskedTextController(mask: '000/000');
   TextEditingController _serialNumber = TextEditingController();
   TextEditingController _carName = TextEditingController();
   TextEditingController _description = TextEditingController();
+  MoneyMaskedTextController _price = MoneyMaskedTextController(initialValue: 0.00, decimalSeparator: '.', leftSymbol: 'Rs. ', thousandSeparator: ',');
 
   late Size size;
   late List? images;
@@ -43,6 +47,7 @@ class _AddNewToyState extends State<AddNewToy> {
     _serialNumber.dispose();
     _carName.dispose();
     _description.dispose();
+    _price.dispose();
     super.dispose();
   }
 
@@ -84,7 +89,7 @@ class _AddNewToyState extends State<AddNewToy> {
                 SizedBox(height: 12),
                 CustomDropDownField(
                   hint: 'Diecast Brand',
-                  items: brands.map((value) => DropdownMenuItem<String>(value: value, child: Text(value, style: TextStyle(fontFamily: fontRegular, fontSize: 14)))).toList(),
+                  items: brands.map((value) => DropdownMenuItem<String>(value: value, child: Text(value, style: TextStyle(fontFamily: fontMedium, fontSize: 14)))).toList(),
                   selectedValue: selectedBrand,
                   validation: (String? val) => val == null ? 'Brand is required' : null,
                   onChanged: (val) => setState(() => selectedBrand = val),
@@ -92,19 +97,27 @@ class _AddNewToyState extends State<AddNewToy> {
                 CustomDropDownField(
                   isEnabled: selectedBrand == 'Hot Wheels',
                   hint: 'Type',
-                  items: type.map((value) => DropdownMenuItem<String>(value: value, child: Text(value, style: TextStyle(fontFamily: fontRegular, fontSize: 14)))).toList(),
+                  items: type.map((value) => DropdownMenuItem<String>(value: value, child: Text(value, style: TextStyle(fontFamily: fontMedium, fontSize: 14)))).toList(),
                   selectedValue: selectedType,
                   validation: (String? val) => selectedBrand == 'Hot Wheels' && val == null ? 'Type is required' : null,
                   onChanged: (val) => setState(() => selectedType = val),
                 ),
                 CustomDatePicker(hint: 'Year', controller: _year, validation: (String? val) => val == '' ? 'Year is required' : null),
-                CustomTextField(controller: _cardNumber, hint: 'Card Number (Front)', validation: (String? val) => val!.isEmpty ? 'Card number is required' : null),
+                CustomTextField(controller: _cardNumber, hint: 'Card Number (Front)', validation: (String? val) => val!.isEmpty ? 'Card number is required' : null, isNumber: true),
                 CustomTextField(controller: _serialNumber, hint: 'Serial Number (Back)', validation: (String? val) => val!.isEmpty ? 'Serial number is required' : null),
                 CustomTextField(controller: _carName, hint: 'Car Name', validation: (String? val) => val!.isEmpty ? 'Car name is required' : null),
+                CustomTextField(controller: _price, hint: 'Price', validation: (String? val) => null, isNumber: true),
                 CustomTextField(controller: _description, hint: 'Description', validation: (String? val) => null, maxLines: 3),
                 Row(
                   children: [
-                    Expanded(child: CustomButton(onTap: () {}, icon: Icons.cancel, text: 'CANCEL', btnColor: colorRed)),
+                    Expanded(
+                        child: CustomButton(
+                            onTap: () {
+                              log(selectedBrand.toString());
+                            },
+                            icon: Icons.cancel,
+                            text: 'CANCEL',
+                            btnColor: colorRed)),
                     SizedBox(width: 10),
                     Expanded(
                       child: CustomButton(
