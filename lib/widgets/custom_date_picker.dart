@@ -76,7 +76,8 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: Text("Select the year"),
+                  contentTextStyle: TextStyle(fontFamily: fontRegular),
+                  title: Text("Select the year", style: TextStyle(fontFamily: fontMedium)),
                   content: Container(
                     width: 300,
                     height: 300,
@@ -86,7 +87,10 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                       initialDate: DateTime.now(),
                       selectedDate: selectedDate,
                       onChanged: (DateTime dateTime) {
-                        setState(() => widget.controller.text = dateTime.year.toString());
+                        setState(() {
+                          selectedDate = dateTime;
+                          widget.controller.text = dateTime.year.toString();
+                        });
                         finish(context);
                       },
                     ),
