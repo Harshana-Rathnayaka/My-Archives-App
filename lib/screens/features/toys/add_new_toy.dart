@@ -154,6 +154,22 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                                           onTap: () => captureImage(false),
                                           child: Text('or \n select from gallery', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontFamily: fontMedium)),
                                         ),
+                                        Visibility(
+                                          visible: isImageError,
+                                          child: Expanded(
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                Text(
+                                                  'At least one image is required',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(fontFamily: fontMedium, fontSize: textSizeSmall, color: Theme.of(context).errorColor),
+                                                ),
+                                                SizedBox(height: 10)
+                                              ],
+                                            ),
+                                          ),
+                                        )
                                       ],
                                     ),
                                   ),
