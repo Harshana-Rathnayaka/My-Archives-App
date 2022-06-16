@@ -25,7 +25,7 @@ class AddNewToy extends StatefulWidget {
   State<AddNewToy> createState() => _AddNewToyState();
 }
 
-class _AddNewToyState extends State<AddNewToy> {
+class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMixin {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _year = TextEditingController();
   MaskedTextController _cardNumber = MaskedTextController(mask: '000/000');
@@ -43,6 +43,21 @@ class _AddNewToyState extends State<AddNewToy> {
   String? selectedBrand;
   String? selectedType;
   DateTime selectedDate = DateTime.now();
+  bool isImageError = false;
+
+  late final AnimationController animationController;
+  late Animation<double> animation;
+
+  @override
+  void initState() {
+    animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 20));
+    animationController.addListener(() {
+      if (animationController.status == AnimationStatus.completed) animationController.reverse();
+    });
+
+    animation = Tween<double>(begin: 1.0, end: 0.0).animate(animationController);
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -76,49 +91,72 @@ class _AddNewToyState extends State<AddNewToy> {
                       scrollDirection: Axis.horizontal,
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, mainAxisSpacing: 0, mainAxisExtent: imageList.length <= 1 ? size.width - 20 : null),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, mainAxisSpacing: 10, mainAxisExtent: imageList.length <= 1 ? size.width - 20 : null),
                       itemBuilder: (context, index) {
                         return index != 0
-                            ? Card(
-                                elevation: 2,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                                child: Stack(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(4.0),
-                                      child: Image.file(
-                                        File(imageList[index]['url']),
-                                        width: double.infinity,
-                                        fit: BoxFit.fill,
-                                        errorBuilder: (context, url, error) => Center(child: new Icon(Icons.error, size: 40, color: colorRed)),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 10,
-                                      right: 10,
-                                      child: Container(
-                                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-                                        child: InkWell(
-                                          onTap: () => setState(() => imageList.removeAt(index)),
-                                          child: Icon(Icons.cancel, size: 24, color: colorRed),
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(4.0),
+                                child: Container(
+                                  margin: const EdgeInsets.all(1.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4.0),
+                                    boxShadow: [BoxShadow(offset: Offset(0.0, 0.0), blurRadius: 1.0)],
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(4.0),
+                                        child: Image.file(
+                                          File(imageList[index]['url']),
+                                          width: double.infinity,
+                                          fit: BoxFit.fill,
+                                          errorBuilder: (context, url, error) => Center(child: new Icon(Icons.error, size: 40, color: colorRed)),
                                         ),
                                       ),
-                                    )
-                                  ],
+                                      Positioned(
+                                        top: 10,
+                                        right: 10,
+                                        child: Container(
+                                          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                                          child: InkWell(
+                                            onTap: () => setState(() => imageList.removeAt(index)),
+                                            child: Icon(Icons.cancel, size: 24, color: colorRed),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               )
-                            : Card(
-                                elevation: 2,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    IconButton(onPressed: () => captureImage(), icon: Icon(Icons.camera_alt), iconSize: 30),
-                                    GestureDetector(
-                                      onTap: () => captureImage(false),
-                                      child: Text('or \n select from gallery', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontFamily: fontMedium)),
+                            : AnimatedBuilder(
+                                animation: animationController.view,
+                                builder: (context, child) => Transform.rotate(angle: animationController.value * 0.04, child: child),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                  child: Container(
+                                    margin: const EdgeInsets.all(1.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4.0),
+                                      color: Theme.of(context).cardColor,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: isImageError == true ? colorRed : Theme.of(context).shadowColor,
+                                          offset: Offset(0.0, 0.0),
+                                          blurRadius: 2.0,
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        IconButton(onPressed: () => captureImage(), icon: Icon(Icons.camera_alt), iconSize: 30),
+                                        GestureDetector(
+                                          onTap: () => captureImage(false),
+                                          child: Text('or \n select from gallery', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontFamily: fontMedium)),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               );
                       }),
@@ -142,6 +180,7 @@ class _AddNewToyState extends State<AddNewToy> {
                   ),
                 ),
                 CustomDatePicker(hint: 'Year', controller: _year, validation: (String? val) => val == '' ? 'Year is required' : null),
+                // TODO: show only if hot wheels
                 CustomTextField(controller: _cardNumber, hint: 'Card Number (Front)', validation: (String? val) => val!.isEmpty ? 'Card number is required' : null, isNumber: true),
                 CustomTextField(controller: _serialNumber, hint: 'Serial Number (Back)', validation: (String? val) => val!.isEmpty ? 'Serial number is required' : null),
                 CustomTextField(controller: _carName, hint: 'Car Name', validation: (String? val) => val!.isEmpty ? 'Car name is required' : null),
@@ -165,7 +204,16 @@ class _AddNewToyState extends State<AddNewToy> {
                         btnColor: colorGreen,
                         onTap: connectionStatus != ConnectivityStatus.Offline
                             ? () {
-                                if (_formKey.currentState!.validate()) {}
+                                if (imageList.length <= 1) {
+                                  setState(() {
+                                    isImageError = true;
+                                    animationController.forward();
+                                  });
+                                } else if (imageList.length > 1) setState(() => isImageError = false);
+
+                                if (_formKey.currentState!.validate() && !isImageError) {
+                                  log('success');
+                                }
                               }
                             : null,
                       ),
