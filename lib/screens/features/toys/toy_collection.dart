@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../constants/fonts.dart';
 import '../../../utils/helper_methods.dart';
 import '../../../widgets/helper_widgets.dart';
 import '../../../widgets/search.dart';
@@ -26,7 +27,11 @@ class _ToyCollectionState extends State<ToyCollection> {
         actions: [IconButton(icon: Icon(Icons.search), onPressed: () => showSearch(context: context, delegate: Search(itemList: toys)))],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: () => launchScreen(context, AddNewToy.tag)),
+      floatingActionButton: FloatingActionButton.extended(
+        label: Text('Add new toy', style: TextStyle(fontFamily: fontMedium)),
+        icon: Icon(Icons.add_box),
+        onPressed: () => launchScreen(context, AddNewToy.tag),
+      ),
     );
   }
 }
