@@ -60,16 +60,20 @@ class GoogleSignInProvider extends ChangeNotifier {
     final movieCollection = FirebaseFirestore.instance.collection('watchedMovies');
     final tvSeriesCollection = FirebaseFirestore.instance.collection('watchedTvSeries');
     final watchlistCollection = FirebaseFirestore.instance.collection('watchlist');
+    final toysCollection = FirebaseFirestore.instance.collection('toys');
 
     // checking whether docs exist under this uid and creating a doc if it does not exist
     DocumentSnapshot movieDbDoc = await movieCollection.doc(uid).get();
     DocumentSnapshot tvSeriesDoc = await tvSeriesCollection.doc(uid).get();
     DocumentSnapshot watchlistDbDoc = await watchlistCollection.doc(uid).get();
+    DocumentSnapshot toysDbDoc = await toysCollection.doc(uid).get();
 
     if (!movieDbDoc.exists) await movieCollection.doc(uid).set({"movies": []});
 
     if (!tvSeriesDoc.exists) await tvSeriesCollection.doc(uid).set({"tvSeries": []});
 
     if (!watchlistDbDoc.exists) await watchlistCollection.doc(uid).set({"movies": [], "tvSeries": []});
+
+    if (!toysDbDoc.exists) await toysCollection.doc(uid).set({});
   }
 }
