@@ -110,10 +110,10 @@ class _WatchlistState extends State<Watchlist> {
         floatingActionButton: Consumer<ThemeNotifier>(
           builder: (context, notifier, child) => SpeedDial(
             child: Icon(Icons.add),
-            closedForegroundColor: notifier.isDark! ? colorBlack : colorWhite,
+            closedForegroundColor: notifier.isDark ? colorBlack : colorWhite,
             closedBackgroundColor: Theme.of(context).colorScheme.secondary,
             openForegroundColor: Theme.of(context).colorScheme.secondary,
-            openBackgroundColor: notifier.isDark! ? colorBlack : colorWhite,
+            openBackgroundColor: notifier.isDark ? colorBlack : colorWhite,
             labelsStyle: TextStyle(fontFamily: fontRegular, color: colorBlack, fontWeight: FontWeight.bold),
             speedDialChildren: <SpeedDialChild>[
               SpeedDialChild(

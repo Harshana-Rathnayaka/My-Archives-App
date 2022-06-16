@@ -30,19 +30,20 @@ ThemeData light = ThemeData(
 // dark theme
 ThemeData dark = ThemeData(
   appBarTheme: AppBarTheme(color: Colors.black45, foregroundColor: colorWhite),
-  colorScheme: ColorScheme.fromSwatch(primarySwatch: MaterialColor(0xFF2FBE43, colorLight)).copyWith(
+  colorScheme: ColorScheme.fromSwatch(primarySwatch: MaterialColor(0xFF07A11C, colorLight)).copyWith(
     secondary: darkAccentColor,
     brightness: Brightness.dark,
+    onSurface: colorWhite,
   ),
 );
 
 class ThemeNotifier extends ChangeNotifier {
   final String key = "theme";
   SharedPreferences? _preferences;
-  bool? _isDark;
+  late bool _isDark;
 
 // getter
-  bool? get isDark => _isDark;
+  bool get isDark => _isDark;
 
   ThemeNotifier() {
     _isDark = true; // default value
@@ -51,7 +52,7 @@ class ThemeNotifier extends ChangeNotifier {
 
 // function to change the theme
   toggleTheme() {
-    _isDark = !_isDark!;
+    _isDark = !_isDark;
     _savedToPrefs();
     notifyListeners();
   }
@@ -73,6 +74,6 @@ class ThemeNotifier extends ChangeNotifier {
 // saving to preferences
   _savedToPrefs() async {
     await _initPrefs();
-    _preferences!.setBool(key, _isDark!);
+    _preferences!.setBool(key, _isDark);
   }
 }

@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeNotifier>(builder: (context, ThemeNotifier notifier, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: notifier.isDark! ? dark : light,
+          theme: notifier.isDark ? dark : light,
           home: Home(),
           routes: <String, WidgetBuilder>{
             Login.tag: (BuildContext context) => Login(),

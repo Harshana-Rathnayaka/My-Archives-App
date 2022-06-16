@@ -44,7 +44,7 @@ class _CustomDialogState extends State<CustomDialog> {
                 height: 60.0,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: notifier.isDark! ? Theme.of(context).primaryColor : Theme.of(context).appBarTheme.backgroundColor,
+                  color: notifier.isDark ? Theme.of(context).primaryColor : Theme.of(context).appBarTheme.backgroundColor,
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
                 ),
                 padding: EdgeInsets.all(12.0),
