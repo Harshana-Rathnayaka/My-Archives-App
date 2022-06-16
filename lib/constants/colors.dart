@@ -13,7 +13,7 @@ const lightAccentColor = Color(0xFF002FA7);
 const lightAppBarColor = Color(0xFF002147);
 
 // dark theme colors
-const darkAccentColor = Color(0xFF2FBE43);
+const darkAccentColor = Color(0xFF07A11C);
 
 // colors for the dark theme switch GitHub style
 const activeToggleColor = Color(0xFF6E40C9);
