@@ -2,7 +2,10 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as Path;
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -36,16 +39,16 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
   MoneyMaskedTextController _price = MoneyMaskedTextController(initialValue: 0.00, decimalSeparator: '.', leftSymbol: 'Rs. ', thousandSeparator: ',');
 
   late Size size;
-  List imageList = [
-    {"name": "placeholder", "url": ""}
-  ];
+  List<File> imageList = [];
+  List<String> downloadUrls = [];
   List<String> brands = ['Hot Wheels', 'Matchbox', 'Tarmac Works', 'Mini GT'];
   List<String> type = ['Basic (Mainline)', 'Premium'];
   String? selectedBrand;
   String? selectedType;
-  DateTime selectedDate = DateTime.now();
   bool isImageError = false;
   bool isLoading = false;
+  bool uploadingImages = false;
+  double uploadedValue = 0;
 
   late final AnimationController _animationController;
   late Animation<double> animation;
@@ -82,6 +85,8 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
       appBar: AppBar(title: AppBarTitle(title: 'Add New Toy'), centerTitle: true),
       body: CustomLoader(
         isLoading: isLoading,
+        progressValue: uploadingImages ? uploadedValue : null,
+        progressBgColor: uploadingImages ? colorWhite : null,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Form(
@@ -92,11 +97,11 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                   Container(
                     height: size.width / 2.5,
                     child: GridView.builder(
-                        itemCount: imageList.length,
+                        itemCount: imageList.length + 1,
                         scrollDirection: Axis.horizontal,
                         shrinkWrap: true,
                         physics: BouncingScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, mainAxisSpacing: 10, mainAxisExtent: imageList.length <= 1 ? size.width - 20 : null),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, mainAxisSpacing: 10, mainAxisExtent: imageList.length == 0 ? size.width - 20 : null),
                         itemBuilder: (context, index) {
                           return index != 0
                               ? ClipRRect(
@@ -112,7 +117,7 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                                         ClipRRect(
                                           borderRadius: BorderRadius.circular(4.0),
                                           child: Image.file(
-                                            File(imageList[index]['url']),
+                                            imageList[index - 1],
                                             width: double.infinity,
                                             fit: BoxFit.fill,
                                             errorBuilder: (context, url, error) => Center(child: new Icon(Icons.error, size: 40, color: colorRed)),
@@ -124,7 +129,7 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                                           child: Container(
                                             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
                                             child: InkWell(
-                                              onTap: () => setState(() => imageList.removeAt(index)),
+                                              onTap: () => setState(() => imageList.removeAt(index - 1)),
                                               child: Icon(Icons.cancel, size: 24, color: colorRed),
                                             ),
                                           ),
@@ -217,18 +222,7 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                   CustomTextField(controller: _description, hint: 'Description', textCapitalization: TextCapitalization.sentences, validation: (String? val) => null, maxLines: 3),
                   Row(
                     children: [
-                      Expanded(
-                          child: CustomButton(
-                              onTap: () {
-                                log(selectedBrand.toString());
-                                // TODO: clear all fields and remove the loading set state below
-                                setState(() {
-                                  isLoading = true;
-                                });
-                              },
-                              icon: Icons.cancel,
-                              text: 'CLEAR',
-                              btnColor: colorRed)),
+                      Expanded(child: CustomButton(onTap: () => clear(), icon: Icons.cancel, text: 'CLEAR', btnColor: colorRed)),
                       SizedBox(width: 10),
                       Expanded(
                         child: CustomButton(
@@ -237,16 +231,21 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                           btnColor: colorGreen,
                           onTap: connectionStatus != ConnectivityStatus.Offline
                               ? () {
-                                  if (imageList.length <= 1) {
+                                  if (imageList.length == 0) {
                                     setState(() {
                                       isImageError = true;
                                       _animationController.forward();
                                     });
-                                  } else if (imageList.length > 1) setState(() => isImageError = false);
+                                  } else if (imageList.length >= 1) setState(() => isImageError = false);
 
                                   if (_formKey.currentState!.validate() && !isImageError) {
                                     log('success');
                                     // TODO: upload to firebase get the image urls store them as a list in the record when updating the details in firebase
+                                    setState(() {
+                                      uploadingImages = true;
+                                      isLoading = true;
+                                    });
+                                    uploadImages();
                                   }
                                 }
                               : null,
@@ -263,20 +262,55 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
     );
   }
 
+  void clear() {
+    setState(() {
+      imageList.clear();
+      downloadUrls.clear();
+      selectedBrand = null;
+      selectedType = null;
+      _year.clear();
+      _modelName.clear();
+      _modelNumber.clear();
+      _castingNumber.clear();
+      _price.updateValue(0.00);
+      _description.clear();
+    });
+  }
+
   Future<void> captureImage([bool isCamera = true]) async {
     if (isCamera) {
       XFile? image = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 100);
-      if (image != null) this.setState(() => imageList.add({"name": image.name, "url": image.path}));
+      if (image != null) this.setState(() => imageList.add(File(image.path)));
       if (image?.path == null) retrieveLostData();
     } else {
       List<XFile>? images = await ImagePicker().pickMultiImage();
-      if (images != null) this.setState(() => images.forEach((element) => imageList.add({"name": element.name, "url": element.path})));
+      if (images != null) this.setState(() => images.forEach((element) => imageList.add(File(element.path))));
     }
   }
 
   Future<void> retrieveLostData() async {
     final LostDataResponse response = await ImagePicker().retrieveLostData();
     if (response.isEmpty) return;
-    if (response.file != null) this.setState(() => imageList.add({"name": response.file?.name, "url": response.file?.path}));
+    if (response.file != null) this.setState(() => imageList.add(File(response.file!.path)));
+  }
+
+  Future uploadImages() async {
+    int i = 0;
+    final user = FirebaseAuth.instance.currentUser;
+
+    for (File image in imageList) {
+      setState(() => uploadedValue = i / imageList.length); // loading value
+      String imageName = '${DateTime.now().millisecondsSinceEpoch.toString()}.jpg'; // unique image name
+
+      // upload task
+      await FirebaseStorage.instance.ref().child('toys/${user!.uid}/${Path.basename(imageName)}').putFile(image).then((taskSnapshot) async {
+        String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+        downloadUrls.add(downloadUrl); // storing the urls in a list
+      });
+
+      i++;
+    }
+
+    if (i == imageList.length) setState(() => uploadingImages = false);
   }
 }

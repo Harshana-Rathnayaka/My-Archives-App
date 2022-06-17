@@ -15,6 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.5
   firebase_auth: ^3.3.19
   firebase_core: ^1.17.1
+  firebase_storage: ^10.2.18
   flutter:
     sdk: flutter
   flutter_masked_text2: ^0.9.1
