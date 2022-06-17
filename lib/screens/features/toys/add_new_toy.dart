@@ -28,9 +28,9 @@ class AddNewToy extends StatefulWidget {
 class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMixin {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _year = TextEditingController();
-  MaskedTextController _cardNumber = MaskedTextController(mask: '000/000');
-  TextEditingController _serialNumber = TextEditingController();
-  TextEditingController _carName = TextEditingController();
+  MaskedTextController _modelNumber = MaskedTextController(mask: '000/000');
+  MaskedTextController _castingNumber = MaskedTextController(mask: '@@@@@-@@@@@');
+  TextEditingController _modelName = TextEditingController();
   TextEditingController _description = TextEditingController();
   MoneyMaskedTextController _price = MoneyMaskedTextController(initialValue: 0.00, decimalSeparator: '.', leftSymbol: 'Rs. ', thousandSeparator: ',');
 
@@ -45,28 +45,29 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
   DateTime selectedDate = DateTime.now();
   bool isImageError = false;
 
-  late final AnimationController animationController;
+  late final AnimationController _animationController;
   late Animation<double> animation;
 
   @override
   void initState() {
-    animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 20));
-    animationController.addListener(() {
-      if (animationController.status == AnimationStatus.completed) animationController.reverse();
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 20));
+    _animationController.addListener(() {
+      if (_animationController.status == AnimationStatus.completed) _animationController.reverse();
     });
 
-    animation = Tween<double>(begin: 1.0, end: 0.0).animate(animationController);
+    animation = Tween<double>(begin: 1.0, end: 0.0).animate(_animationController);
     super.initState();
   }
 
   @override
   void dispose() {
     _year.dispose();
-    _cardNumber.dispose();
-    _serialNumber.dispose();
-    _carName.dispose();
+    _modelNumber.dispose();
+    _castingNumber.dispose();
+    _modelName.dispose();
     _description.dispose();
     _price.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -129,8 +130,8 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                                 ),
                               )
                             : AnimatedBuilder(
-                                animation: animationController.view,
-                                builder: (context, child) => Transform.rotate(angle: animationController.value * 0.04, child: child),
+                                animation: _animationController.view,
+                                builder: (context, child) => Transform.rotate(angle: _animationController.value * 0.04, child: child),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(4.0),
                                   child: Container(
@@ -140,9 +141,10 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                                       color: Theme.of(context).cardColor,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: isImageError == true ? colorRed : Theme.of(context).shadowColor,
+                                          color: isImageError == true ? colorRed : Theme.of(context).colorScheme.secondary,
                                           offset: Offset(0.0, 0.0),
                                           blurRadius: 2.0,
+                                          spreadRadius: 2.0,
                                         ),
                                       ],
                                     ),
@@ -196,12 +198,19 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                   ),
                 ),
                 CustomDatePicker(hint: 'Year', controller: _year, validation: (String? val) => val == '' ? 'Year is required' : null),
-                // TODO: show only if hot wheels
-                CustomTextField(controller: _cardNumber, hint: 'Card Number (Front)', validation: (String? val) => val!.isEmpty ? 'Card number is required' : null, isNumber: true),
-                CustomTextField(controller: _serialNumber, hint: 'Serial Number (Back)', validation: (String? val) => val!.isEmpty ? 'Serial number is required' : null),
-                CustomTextField(controller: _carName, hint: 'Car Name', validation: (String? val) => val!.isEmpty ? 'Car name is required' : null),
-                CustomTextField(controller: _price, hint: 'Price', validation: (String? val) => null, isNumber: true),
-                CustomTextField(controller: _description, hint: 'Description', validation: (String? val) => null, maxLines: 3),
+                CustomTextField(controller: _modelName, hint: 'Model Name', validation: (String? val) => val!.isEmpty ? 'Car name is required' : null),
+                Visibility(visible: selectedBrand == 'Hot Wheels', child: CustomTextField(controller: _modelNumber, hint: 'Model Number (Front)', validation: (String? val) => null, isNumber: true)),
+                Visibility(
+                  visible: selectedBrand == 'Hot Wheels' || selectedBrand == 'Matchbox',
+                  child: CustomTextField(
+                    controller: _castingNumber,
+                    hint: 'Casting Number (Back)',
+                    textCapitalization: TextCapitalization.characters,
+                    validation: (String? val) => val!.isEmpty ? 'Casting number is required' : null,
+                  ),
+                ),
+                CustomTextField(controller: _price, hint: 'Price', validation: (String? val) => val!.isEmpty ? 'Price is required' : null, isNumber: true),
+                CustomTextField(controller: _description, hint: 'Description', textCapitalization: TextCapitalization.sentences, validation: (String? val) => null, maxLines: 3),
                 Row(
                   children: [
                     Expanded(
@@ -223,7 +232,7 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                                 if (imageList.length <= 1) {
                                   setState(() {
                                     isImageError = true;
-                                    animationController.forward();
+                                    _animationController.forward();
                                   });
                                 } else if (imageList.length > 1) setState(() => isImageError = false);
 
