@@ -20,6 +20,7 @@ class CustomTextField extends StatefulWidget {
   final onChanged;
   final autofill;
   final onEditingComplete;
+  final TextCapitalization textCapitalization;
 
   CustomTextField({
     this.isPassword = false,
@@ -37,6 +38,7 @@ class CustomTextField extends StatefulWidget {
     this.onChanged,
     this.autofill,
     this.onEditingComplete,
+    this.textCapitalization = TextCapitalization.words,
   });
 
   @override
@@ -49,6 +51,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: TextFormField(
+        textCapitalization: widget.textCapitalization,
         onEditingComplete: widget.onEditingComplete,
         autofillHints: widget.autofill,
         enabled: widget.isEnabled,
