@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../components/theme.dart';
-import '/constants/colors.dart';
+import '../constants/fonts.dart';
 
 class CustomLoader extends StatefulWidget {
   final bool isLoading;
   final double opacity;
-  final Widget progressIndicator;
+  final Color? progressBgColor;
+  final double? progressValue;
   final Widget child;
 
   const CustomLoader({
@@ -15,7 +14,8 @@ class CustomLoader extends StatefulWidget {
     required this.isLoading,
     required this.child,
     this.opacity = 0.4,
-    this.progressIndicator = const CircularProgressIndicator(),
+    this.progressBgColor,
+    this.progressValue,
   }) : super(key: key);
 
   @override
@@ -65,9 +65,32 @@ class _CustomLoaderState extends State<CustomLoader> with SingleTickerProviderSt
       final modal = FadeTransition(
         opacity: _animation,
         child: Stack(
+          alignment: Alignment.center,
           children: <Widget>[
             Opacity(child: ModalBarrier(dismissible: false, color: Theme.of(context).backgroundColor), opacity: widget.opacity),
-            Center(child: widget.progressIndicator),
+            SizedBox(
+              width: double.infinity,
+              height: 100,
+              child: Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                CircularProgressIndicator(value: widget.progressValue, backgroundColor: widget.progressBgColor),
+                Visibility(
+                  visible: widget.progressValue != null,
+                  child: Center(
+                      child: Text(
+                    widget.progressValue != null ? '${(widget.progressValue! * 100).toStringAsFixed(0)}%' : '',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontFamily: fontSemiBold),
+                  )),
+                ),
+                Visibility(
+                  visible: widget.progressValue != null,
+                  child: Center(
+                      child: Text(
+                    widget.progressValue != null ? 'Uploading images..' : '',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontFamily: fontRegular),
+                  )),
+                ),
+              ]),
+            )
           ],
         ),
       );
