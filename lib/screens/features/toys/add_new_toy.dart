@@ -13,6 +13,7 @@ import '../../../constants/fonts.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_date_picker.dart';
 import '../../../widgets/custom_dropdown_field.dart';
+import '../../../widgets/custom_loader.dart';
 import '../../../widgets/custom_textfield.dart';
 import '../../../widgets/helper_widgets.dart';
 
@@ -44,6 +45,7 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
   String? selectedType;
   DateTime selectedDate = DateTime.now();
   bool isImageError = false;
+  bool isLoading = false;
 
   late final AnimationController _animationController;
   late Animation<double> animation;
@@ -78,174 +80,182 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
 
     return Scaffold(
       appBar: AppBar(title: AppBarTitle(title: 'Add New Toy'), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  height: size.width / 2.5,
-                  child: GridView.builder(
-                      itemCount: imageList.length,
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, mainAxisSpacing: 10, mainAxisExtent: imageList.length <= 1 ? size.width - 20 : null),
-                      itemBuilder: (context, index) {
-                        return index != 0
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(4.0),
-                                child: Container(
-                                  margin: const EdgeInsets.all(1.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    boxShadow: [BoxShadow(offset: Offset(0.0, 0.0), blurRadius: 1.0)],
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(4.0),
-                                        child: Image.file(
-                                          File(imageList[index]['url']),
-                                          width: double.infinity,
-                                          fit: BoxFit.fill,
-                                          errorBuilder: (context, url, error) => Center(child: new Icon(Icons.error, size: 40, color: colorRed)),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: 10,
-                                        right: 10,
-                                        child: Container(
-                                          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-                                          child: InkWell(
-                                            onTap: () => setState(() => imageList.removeAt(index)),
-                                            child: Icon(Icons.cancel, size: 24, color: colorRed),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : AnimatedBuilder(
-                                animation: _animationController.view,
-                                builder: (context, child) => Transform.rotate(angle: _animationController.value * 0.04, child: child),
-                                child: ClipRRect(
+      body: CustomLoader(
+        isLoading: isLoading,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    height: size.width / 2.5,
+                    child: GridView.builder(
+                        itemCount: imageList.length,
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        physics: BouncingScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, mainAxisSpacing: 10, mainAxisExtent: imageList.length <= 1 ? size.width - 20 : null),
+                        itemBuilder: (context, index) {
+                          return index != 0
+                              ? ClipRRect(
                                   borderRadius: BorderRadius.circular(4.0),
                                   child: Container(
                                     margin: const EdgeInsets.all(1.0),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(4.0),
-                                      color: Theme.of(context).cardColor,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: isImageError == true ? colorRed : Theme.of(context).colorScheme.secondary,
-                                          offset: Offset(0.0, 0.0),
-                                          blurRadius: 2.0,
-                                          spreadRadius: 2.0,
-                                        ),
-                                      ],
+                                      boxShadow: [BoxShadow(offset: Offset(0.0, 0.0), blurRadius: 1.0)],
                                     ),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                    child: Stack(
                                       children: [
-                                        IconButton(onPressed: () => captureImage(), icon: Icon(Icons.camera_alt), iconSize: 30),
-                                        GestureDetector(
-                                          onTap: () => captureImage(false),
-                                          child: Text('or \n select from gallery', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontFamily: fontMedium)),
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(4.0),
+                                          child: Image.file(
+                                            File(imageList[index]['url']),
+                                            width: double.infinity,
+                                            fit: BoxFit.fill,
+                                            errorBuilder: (context, url, error) => Center(child: new Icon(Icons.error, size: 40, color: colorRed)),
+                                          ),
                                         ),
-                                        Visibility(
-                                          visible: isImageError,
-                                          child: Expanded(
-                                            child: Column(
-                                              children: [
-                                                Spacer(),
-                                                Text(
-                                                  'At least one image is required',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(fontFamily: fontMedium, fontSize: textSizeSmall, color: Theme.of(context).errorColor),
-                                                ),
-                                                SizedBox(height: 10)
-                                              ],
+                                        Positioned(
+                                          top: 10,
+                                          right: 10,
+                                          child: Container(
+                                            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                                            child: InkWell(
+                                              onTap: () => setState(() => imageList.removeAt(index)),
+                                              child: Icon(Icons.cancel, size: 24, color: colorRed),
                                             ),
                                           ),
                                         )
                                       ],
                                     ),
                                   ),
-                                ),
-                              );
-                      }),
-                ),
-                SizedBox(height: 12),
-                CustomDropDownField(
-                  hint: 'Diecast Brand',
-                  items: brands.map((value) => DropdownMenuItem<String>(value: value, child: Text(value, style: TextStyle(fontFamily: fontMedium, fontSize: 14)))).toList(),
-                  selectedValue: selectedBrand,
-                  validation: (String? val) => val == null ? 'Brand is required' : null,
-                  onChanged: (val) => setState(() => selectedBrand = val),
-                ),
-                Visibility(
-                  visible: selectedBrand == 'Hot Wheels',
-                  child: CustomDropDownField(
-                    hint: 'Type',
-                    items: type.map((value) => DropdownMenuItem<String>(value: value, child: Text(value, style: TextStyle(fontFamily: fontMedium, fontSize: 14)))).toList(),
-                    selectedValue: selectedType,
-                    validation: (String? val) => selectedBrand == 'Hot Wheels' && val == null ? 'Type is required' : null,
-                    onChanged: (val) => setState(() => selectedType = val),
+                                )
+                              : AnimatedBuilder(
+                                  animation: _animationController.view,
+                                  builder: (context, child) => Transform.rotate(angle: _animationController.value * 0.04, child: child),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(4.0),
+                                    child: Container(
+                                      margin: const EdgeInsets.all(1.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(4.0),
+                                        color: Theme.of(context).cardColor,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: isImageError == true ? colorRed : Theme.of(context).colorScheme.secondary,
+                                            offset: Offset(0.0, 0.0),
+                                            blurRadius: 2.0,
+                                            spreadRadius: 2.0,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          IconButton(onPressed: () => captureImage(), icon: Icon(Icons.camera_alt), iconSize: 30),
+                                          GestureDetector(
+                                            onTap: () => captureImage(false),
+                                            child: Text('or \n select from gallery', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontFamily: fontMedium)),
+                                          ),
+                                          Visibility(
+                                            visible: isImageError,
+                                            child: Expanded(
+                                              child: Column(
+                                                children: [
+                                                  Spacer(),
+                                                  Text(
+                                                    'At least one image is required',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(fontFamily: fontMedium, fontSize: textSizeSmall, color: Theme.of(context).errorColor),
+                                                  ),
+                                                  SizedBox(height: 10)
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                        }),
                   ),
-                ),
-                CustomDatePicker(hint: 'Year', controller: _year, validation: (String? val) => val == '' ? 'Year is required' : null),
-                CustomTextField(controller: _modelName, hint: 'Model Name', validation: (String? val) => val!.isEmpty ? 'Car name is required' : null),
-                Visibility(visible: selectedBrand == 'Hot Wheels', child: CustomTextField(controller: _modelNumber, hint: 'Model Number (Front)', validation: (String? val) => null, isNumber: true)),
-                Visibility(
-                  visible: selectedBrand == 'Hot Wheels' || selectedBrand == 'Matchbox',
-                  child: CustomTextField(
-                    controller: _castingNumber,
-                    hint: 'Casting Number (Back)',
-                    textCapitalization: TextCapitalization.characters,
-                    validation: (String? val) => val!.isEmpty ? 'Casting number is required' : null,
+                  SizedBox(height: 12),
+                  CustomDropDownField(
+                    hint: 'Diecast Brand',
+                    items: brands.map((value) => DropdownMenuItem<String>(value: value, child: Text(value, style: TextStyle(fontFamily: fontMedium, fontSize: 14)))).toList(),
+                    selectedValue: selectedBrand,
+                    validation: (String? val) => val == null ? 'Brand is required' : null,
+                    onChanged: (val) => setState(() => selectedBrand = val),
                   ),
-                ),
-                CustomTextField(controller: _price, hint: 'Price', validation: (String? val) => val!.isEmpty ? 'Price is required' : null, isNumber: true),
-                CustomTextField(controller: _description, hint: 'Description', textCapitalization: TextCapitalization.sentences, validation: (String? val) => null, maxLines: 3),
-                Row(
-                  children: [
-                    Expanded(
-                        child: CustomButton(
-                            onTap: () {
-                              log(selectedBrand.toString());
-                            },
-                            icon: Icons.cancel,
-                            text: 'CANCEL',
-                            btnColor: colorRed)),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: CustomButton(
-                        icon: Icons.check_circle,
-                        text: 'SAVE',
-                        btnColor: colorGreen,
-                        onTap: connectionStatus != ConnectivityStatus.Offline
-                            ? () {
-                                if (imageList.length <= 1) {
-                                  setState(() {
-                                    isImageError = true;
-                                    _animationController.forward();
-                                  });
-                                } else if (imageList.length > 1) setState(() => isImageError = false);
-
-                                if (_formKey.currentState!.validate() && !isImageError) {
-                                  log('success');
-                                }
-                              }
-                            : null,
-                      ),
+                  Visibility(
+                    visible: selectedBrand == 'Hot Wheels',
+                    child: CustomDropDownField(
+                      hint: 'Type',
+                      items: type.map((value) => DropdownMenuItem<String>(value: value, child: Text(value, style: TextStyle(fontFamily: fontMedium, fontSize: 14)))).toList(),
+                      selectedValue: selectedType,
+                      validation: (String? val) => selectedBrand == 'Hot Wheels' && val == null ? 'Type is required' : null,
+                      onChanged: (val) => setState(() => selectedType = val),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  CustomDatePicker(hint: 'Year', controller: _year, validation: (String? val) => val == '' ? 'Year is required' : null),
+                  CustomTextField(controller: _modelName, hint: 'Model Name', validation: (String? val) => val!.isEmpty ? 'Car name is required' : null),
+                  Visibility(visible: selectedBrand == 'Hot Wheels', child: CustomTextField(controller: _modelNumber, hint: 'Model Number (Front)', validation: (String? val) => null, isNumber: true)),
+                  Visibility(
+                    visible: selectedBrand == 'Hot Wheels' || selectedBrand == 'Matchbox',
+                    child: CustomTextField(
+                      controller: _castingNumber,
+                      hint: 'Casting Number (Back)',
+                      textCapitalization: TextCapitalization.characters,
+                      validation: (String? val) => val!.isEmpty ? 'Casting number is required' : null,
+                    ),
+                  ),
+                  CustomTextField(controller: _price, hint: 'Price', validation: (String? val) => val!.isEmpty ? 'Price is required' : null, isNumber: true),
+                  CustomTextField(controller: _description, hint: 'Description', textCapitalization: TextCapitalization.sentences, validation: (String? val) => null, maxLines: 3),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: CustomButton(
+                              onTap: () {
+                                log(selectedBrand.toString());
+                                // TODO: clear all fields and remove the loading set state below
+                                setState(() {
+                                  isLoading = true;
+                                });
+                              },
+                              icon: Icons.cancel,
+                              text: 'CLEAR',
+                              btnColor: colorRed)),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: CustomButton(
+                          icon: Icons.check_circle,
+                          text: 'SAVE',
+                          btnColor: colorGreen,
+                          onTap: connectionStatus != ConnectivityStatus.Offline
+                              ? () {
+                                  if (imageList.length <= 1) {
+                                    setState(() {
+                                      isImageError = true;
+                                      _animationController.forward();
+                                    });
+                                  } else if (imageList.length > 1) setState(() => isImageError = false);
+
+                                  if (_formKey.currentState!.validate() && !isImageError) {
+                                    log('success');
+                                    // TODO: upload to firebase get the image urls store them as a list in the record when updating the details in firebase
+                                  }
+                                }
+                              : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
