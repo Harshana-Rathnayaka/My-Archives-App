@@ -263,13 +263,20 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
     );
   }
 
-  Future captureImage([bool isCamera = true]) async {
+  Future<void> captureImage([bool isCamera = true]) async {
     if (isCamera) {
       XFile? image = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 100);
       if (image != null) this.setState(() => imageList.add({"name": image.name, "url": image.path}));
+      if (image?.path == null) retrieveLostData();
     } else {
       List<XFile>? images = await ImagePicker().pickMultiImage();
       if (images != null) this.setState(() => images.forEach((element) => imageList.add({"name": element.name, "url": element.path})));
     }
+  }
+
+  Future<void> retrieveLostData() async {
+    final LostDataResponse response = await ImagePicker().retrieveLostData();
+    if (response.isEmpty) return;
+    if (response.file != null) this.setState(() => imageList.add({"name": response.file?.name, "url": response.file?.path}));
   }
 }
