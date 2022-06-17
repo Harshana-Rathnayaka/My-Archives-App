@@ -1,18 +1,18 @@
-import 'dart:developer';
 import 'dart:io';
-
-import 'package:flutter/material.dart';
-import 'package:path/path.dart' as Path;
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as Path;
 import 'package:provider/provider.dart';
 
 import '../../../components/connectivity_status.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/fonts.dart';
+import '../../../services/toy_service.dart';
+import '../../../utils/helper_methods.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_date_picker.dart';
 import '../../../widgets/custom_dropdown_field.dart';
@@ -39,19 +39,25 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
   MoneyMaskedTextController _price = MoneyMaskedTextController(initialValue: 0.00, decimalSeparator: '.', leftSymbol: 'Rs. ', thousandSeparator: ',');
 
   late Size size;
+
   List<File> imageList = [];
   List<String> downloadUrls = [];
+
   List<String> brands = ['Hot Wheels', 'Matchbox', 'Tarmac Works', 'Mini GT'];
   List<String> type = ['Basic (Mainline)', 'Premium'];
+
   String? selectedBrand;
   String? selectedType;
-  bool isImageError = false;
-  bool isLoading = false;
-  bool uploadingImages = false;
-  double uploadedValue = 0;
+
+  bool isImageError = false; // if user has not selected any image
+  bool isLoading = false; // loading indicator when sending data
+  bool uploadingImages = false; // loading indicator when uploading images
+  double uploadedValue = 0; // value for image upload progress
 
   late final AnimationController _animationController;
   late Animation<double> animation;
+
+  final user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -239,13 +245,31 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                                   } else if (imageList.length >= 1) setState(() => isImageError = false);
 
                                   if (_formKey.currentState!.validate() && !isImageError) {
-                                    log('success');
-                                    // TODO: upload to firebase get the image urls store them as a list in the record when updating the details in firebase
                                     setState(() {
                                       uploadingImages = true;
                                       isLoading = true;
                                     });
-                                    uploadImages();
+
+                                    uploadImages().then((value) {
+                                      Map<String, dynamic> toyData = {
+                                        'brand': selectedBrand,
+                                        'type': selectedType,
+                                        'year': _year.text,
+                                        'modelName': _modelName.text,
+                                        'modelNumber': _modelNumber.text.isEmpty ? null : _modelNumber.text,
+                                        'castingNumber': _castingNumber.text.isEmpty ? null : _castingNumber.text,
+                                        'price': _price.numberValue,
+                                        'description': _description.text.isEmpty ? null : _description.text,
+                                        'images': downloadUrls
+                                      };
+
+                                      ToyService(uid: user!.uid).addToy(toyDetails: toyData).then((value) {
+                                        showToast(msg: 'Record added successfully', backGroundColor: colorGreen);
+                                        clear();
+                                      }).onError((error, stackTrace) {
+                                        showToast(msg: error.toString(), backGroundColor: colorRed);
+                                      }).whenComplete(() => setState(() => isLoading = false));
+                                    });
                                   }
                                 }
                               : null,
@@ -296,11 +320,11 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
 
   Future uploadImages() async {
     int i = 0;
-    final user = FirebaseAuth.instance.currentUser;
 
     for (File image in imageList) {
       setState(() => uploadedValue = i / imageList.length); // loading value
-      String imageName = '${DateTime.now().millisecondsSinceEpoch.toString()}.jpg'; // unique image name
+      String fileType = Path.extension(image.path);
+      String imageName = '${DateTime.now().millisecondsSinceEpoch.toString()}$fileType'; // unique image name
 
       // upload task
       await FirebaseStorage.instance.ref().child('toys/${user!.uid}/${Path.basename(imageName)}').putFile(image).then((taskSnapshot) async {
