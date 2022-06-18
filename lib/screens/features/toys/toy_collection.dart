@@ -11,6 +11,7 @@ import '../../../utils/helper_methods.dart';
 import '../../../widgets/helper_widgets.dart';
 import '../../../widgets/search.dart';
 import 'add_new_toy.dart';
+import 'toy_details.dart';
 
 class ToyCollection extends StatefulWidget {
   static var tag = "/ToyCollection";
@@ -48,59 +49,65 @@ class _ToyCollectionState extends State<ToyCollection> {
               itemBuilder: (context, index) {
                 Toy toy = data.docs[index].data();
 
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: Card(
-                    elevation: 10,
-                    child: Container(
-                      height: 100,
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              CachedNetworkImage(
-                                width: 60,
-                                height: 50,
-                                imageUrl: toy.images[0],
-                                placeholder: (context, url) => new Center(child: CircularProgressIndicator()),
-                                errorWidget: (context, url, error) => new Icon(Icons.error, size: 26, color: colorRed),
-                                imageBuilder: (context, imageProvider) => Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      boxShadow: [BoxShadow(color: Theme.of(context).shadowColor.withOpacity(0.5), offset: Offset(1.0, 2.0), blurRadius: 3.0)],
-                                      image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
+                return GestureDetector(
+                  onTap: () => launchScreen(context, ToyDetails.tag, arguments: toy),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: Card(
+                      elevation: 10,
+                      child: Container(
+                        height: 100,
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Hero(
+                                  tag: toy.images[0],
+                                  child: CachedNetworkImage(
+                                    width: 60,
+                                    height: 50,
+                                    imageUrl: toy.images[0],
+                                    placeholder: (context, url) => new Center(child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) => new Icon(Icons.error, size: 26, color: colorRed),
+                                    imageBuilder: (context, imageProvider) => Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(6),
+                                          boxShadow: [BoxShadow(color: Theme.of(context).shadowColor.withOpacity(0.5), offset: Offset(1.0, 2.0), blurRadius: 3.0)],
+                                          image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(toy.modelName, style: TextStyle(fontFamily: fontMedium, fontWeight: FontWeight.bold, fontSize: textSizeSMedium)),
-                                  Text('${toy.year} ${toy.brand} ${toy.type ?? ''}', style: TextStyle(fontFamily: fontRegular, fontSize: textSizeSmall)),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Spacer(),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Visibility(
-                                visible: toy.modelNumber != null,
-                                child: Text(toy.modelNumber ?? '', style: TextStyle(fontFamily: fontBold, fontSize: textSizeExtraSmall)),
-                              ),
-                              Visibility(
-                                visible: toy.castingNumber != null,
-                                child: Text(toy.castingNumber ?? '', style: TextStyle(fontFamily: fontBold, fontSize: textSizeExtraSmall)),
-                              ),
-                            ],
-                          ),
-                        ],
+                                SizedBox(width: 10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(toy.modelName, style: TextStyle(fontFamily: fontMedium, fontWeight: FontWeight.bold, fontSize: textSizeSMedium)),
+                                    Text('${toy.year} ${toy.brand} ${toy.type ?? ''}', style: TextStyle(fontFamily: fontRegular, fontSize: textSizeSmall)),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Spacer(),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Visibility(
+                                  visible: toy.modelNumber != null,
+                                  child: Text(toy.modelNumber ?? '', style: TextStyle(fontFamily: fontBold, fontSize: textSizeExtraSmall)),
+                                ),
+                                Visibility(
+                                  visible: toy.castingNumber != null,
+                                  child: Text(toy.castingNumber ?? '', style: TextStyle(fontFamily: fontBold, fontSize: textSizeExtraSmall)),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

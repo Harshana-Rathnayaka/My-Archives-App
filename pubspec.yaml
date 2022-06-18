@@ -24,6 +24,7 @@ dependencies:
   fluttertoast: ^8.0.9
   google_sign_in: ^5.3.3
   image_picker: ^0.8.5+3
+  photo_view: ^0.14.0
   provider: ^6.0.3
   rxdart: ^0.27.4
   shared_preferences: ^2.0.15
