@@ -251,6 +251,8 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                                       isLoading = true;
                                     });
 
+                                    hideKeyboard(context);
+
                                     uploadImages().then((value) {
                                       Toy toy = Toy.fromJson({
                                         'brand': selectedBrand,
