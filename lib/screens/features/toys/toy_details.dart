@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../../components/theme.dart';
-import '../../../constants/colors.dart';
 import '../../../constants/fonts.dart';
 import '../../../models/toy.dart';
 import '../../../utils/helper_methods.dart';
@@ -26,7 +23,6 @@ class _ToyDetailsState extends State<ToyDetails> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeNotifier theme = Provider.of<ThemeNotifier>(context);
     size = MediaQuery.of(context).size;
     Toy toy = ModalRoute.of(context)!.settings.arguments as Toy;
 
@@ -36,30 +32,14 @@ class _ToyDetailsState extends State<ToyDetails> {
           Stack(
             children: [
               GestureDetector(
-                onTap: () => viewImage(toy.images, selectedImage),
+                onTap: () => launchScreen(context, GalleryView.tag, arguments: {'images': toy.images, 'selectedIndex': selectedImage}),
                 child: SizedBox(
                   width: size.width,
                   height: size.width,
                   child: AspectRatio(aspectRatio: 1, child: Hero(tag: toy.images[selectedImage], child: ImageWidget(imageUrl: toy.images[selectedImage], noDecoration: true))),
                 ),
               ),
-              Positioned(
-                top: 50,
-                left: 20,
-                child: InkWell(
-                  onTap: () => finish(context),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: theme.isDark ? colorWhite.withOpacity(0.4) : colorBlack.withOpacity(0.5),
-                    ),
-                    child: Icon(Icons.arrow_back, color: colorWhite),
-                  ),
-                ),
-              ),
+              CustomBackButton()
             ],
           ),
           Row(
@@ -80,9 +60,6 @@ class _ToyDetailsState extends State<ToyDetails> {
       ),
     );
   }
-
-  // open image to look more closely
-  void viewImage(List images, selectedIndex) => launchScreen(context, GalleryView.tag, arguments: {'images': images, 'selectedIndex': selectedIndex});
 
   // small image preview boxes
   GestureDetector imagePreview(List images, int index) {
