@@ -1,17 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
+import 'package:provider/provider.dart';
 
+import '../../../components/theme.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/fonts.dart';
-import '../../../constants/images.dart';
 import '../../../models/toy.dart';
 import '../../../utils/helper_methods.dart';
+import '../../../widgets/gallery_view.dart';
+import 'components/description_section.dart';
+import 'components/edit_button.dart';
+import 'components/toy_details_table.dart';
 
 class ToyDetails extends StatefulWidget {
   static var tag = "/ToyDetails";
-
   const ToyDetails({Key? key}) : super(key: key);
 
   @override
@@ -20,11 +22,11 @@ class ToyDetails extends StatefulWidget {
 
 class _ToyDetailsState extends State<ToyDetails> {
   late Size size;
-
   int selectedImage = 0;
 
   @override
   Widget build(BuildContext context) {
+    ThemeNotifier theme = Provider.of<ThemeNotifier>(context);
     size = MediaQuery.of(context).size;
     Toy toy = ModalRoute.of(context)!.settings.arguments as Toy;
 
@@ -37,7 +39,7 @@ class _ToyDetailsState extends State<ToyDetails> {
                 onTap: () => viewImage(toy.images, selectedImage),
                 child: SizedBox(
                   width: size.width,
-                  height: size.width / 1.5,
+                  height: size.width,
                   child: AspectRatio(
                     aspectRatio: 1,
                     child: Hero(
@@ -53,24 +55,47 @@ class _ToyDetailsState extends State<ToyDetails> {
                 ),
               ),
               Positioned(
-                  top: 50,
-                  left: 30,
-                  child: GestureDetector(
-                      onTap: () {
-                        finish(context);
-                      },
-                      child: Icon(Icons.arrow_back_ios))),
+                top: 50,
+                left: 20,
+                child: InkWell(
+                  onTap: () => finish(context),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: theme.isDark ? colorWhite.withOpacity(0.4) : colorBlack.withOpacity(0.5),
+                    ),
+                    child: Icon(Icons.arrow_back, color: colorWhite),
+                  ),
+                ),
+              ),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [...List.generate(toy.images.length, (index) => imagePreview(toy.images, index))],
           ),
+          DescriptionSection(
+            children: [
+              EditButton(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Text(toy.modelName, style: Theme.of(context).textTheme.headline6!.copyWith(fontFamily: fontSemiBold)),
+              ),
+              Padding(padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20), child: ToyDetailsTable(toy: toy))
+            ],
+          ),
         ],
       ),
     );
   }
 
+  // open image to look more closely
+  void viewImage(List images, selectedIndex) => launchScreen(context, GalleryView.tag, arguments: {'images': images, 'selectedIndex': selectedIndex});
+
+  // small image preview boxes
   GestureDetector imagePreview(List images, int index) {
     return GestureDetector(
       onTap: () => setState(() => selectedImage = index),
@@ -87,86 +112,9 @@ class _ToyDetailsState extends State<ToyDetails> {
           placeholder: (context, url) => new Center(child: CircularProgressIndicator()),
           errorWidget: (context, url, error) => new Icon(Icons.error, color: colorRed),
           imageBuilder: (context, imageProvider) => Container(
-              decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-          )),
-        ),
-      ),
-    );
-  }
-
-  void viewImage(List images, selectedIndex) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => Gallery(images: images, index: selectedIndex)));
-}
-
-class Gallery extends StatefulWidget {
-  final List images;
-  final int index;
-  final PageController pageController;
-
-  Gallery({required this.images, this.index = 0}) : pageController = PageController(initialPage: index);
-
-  @override
-  State<Gallery> createState() => _GalleryState();
-}
-
-class _GalleryState extends State<Gallery> {
-  late int index = widget.index;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          PhotoViewGallery.builder(
-            itemCount: widget.images.length,
-            pageController: widget.pageController,
-            onPageChanged: (index) => setState(() => this.index = index),
-            loadingBuilder: (context, ImageChunkEvent? event) {
-              double value = event == null ? 0 : event.cumulativeBytesLoaded / double.parse(event.expectedTotalBytes.toString());
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 100,
-                    child: Column(
-                      children: [
-                        Center(child: CircularProgressIndicator(value: value)),
-                        SizedBox(height: 8),
-                        Text('loading... ${(value * 100).toStringAsFixed(0)}%', style: TextStyle(fontFamily: fontMedium)),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
-            builder: (context, index) {
-              final image = widget.images[index];
-              return PhotoViewGalleryPageOptions(
-                imageProvider: NetworkImage(image),
-                heroAttributes: PhotoViewHeroAttributes(tag: image),
-                errorBuilder: (context, object, stacktrace) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 120,
-                        height: 80,
-                        decoration: BoxDecoration(image: DecorationImage(image: AssetImage(brokenImage), fit: BoxFit.cover)),
-                      ),
-                      Text('Something went wrong!', style: TextStyle(fontFamily: fontMedium)),
-                    ],
-                  );
-                },
-              );
-            },
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text('Image ${index + 1}/${widget.images.length}', style: TextStyle(fontFamily: fontMedium, color: colorWhite)),
-          )
-        ],
+        ),
       ),
     );
   }
