@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
@@ -41,7 +40,7 @@ class _LoginState extends State<Login> {
 
                   connectionStatus != ConnectivityStatus.Offline
                       ? provider.googleLogin()
-                      : ScaffoldMessenger.of(context).showSnackBar(customSnackbar(icon: Icons.cloud_off, iconColor: colorRed, text: 'No internet connection!'));
+                      : ScaffoldMessenger.of(context).showSnackBar(customSnackBar(icon: Icons.cloud_off, iconColor: colorRed, text: 'No internet connection!'));
                 },
                 child: Card(
                   color: connectionStatus != ConnectivityStatus.Offline ? Theme.of(context).cardColor : Colors.grey[400],

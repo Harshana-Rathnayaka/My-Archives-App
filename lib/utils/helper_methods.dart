@@ -21,19 +21,13 @@ void launchScreenWithNewTask(context, String tag, {Object? arguments}) {
   }
 }
 
-void finish(context, {dynamic val = false}) {
-  Navigator.pop(context, val);
-}
+void finish(context, {dynamic val = false}) => Navigator.pop(context, val);
 
-back(var context) {
-  Navigator.pop(context);
-}
+back(var context) => Navigator.pop(context);
 
-void hideKeyboard(context) {
-  FocusScope.of(context).requestFocus(FocusNode());
-}
+void hideKeyboard(context) => FocusScope.of(context).requestFocus(FocusNode());
 
-SnackBar customSnackbar({required IconData icon, required Color iconColor, required String text}) {
+SnackBar customSnackBar({required IconData icon, required Color iconColor, required String text}) {
   return SnackBar(
     content: Row(
       children: [
