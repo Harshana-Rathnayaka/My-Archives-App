@@ -22,14 +22,21 @@ class ToyCollection extends StatefulWidget {
 class _ToyCollectionState extends State<ToyCollection> {
   List toys = [];
   final user = FirebaseAuth.instance.currentUser;
+  bool isItemSelected = false;
+  late int selectedItem;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: AppBarTitle(title: 'Toy Collection'),
+        title: isItemSelected ? null : AppBarTitle(title: 'Toy Collection'),
+        leading: IconButton(onPressed: () => isItemSelected ? setState(() => isItemSelected = false) : finish(context), icon: Icon(Icons.arrow_back)),
         centerTitle: true,
-        actions: [IconButton(icon: Icon(Icons.search), onPressed: () => showSearch(context: context, delegate: Search(itemList: toys)))],
+        actions: [
+          IconButton(icon: Icon(isItemSelected ? Icons.delete : Icons.search), onPressed: () => showSearch(context: context, delegate: Search(itemList: toys))),
+          isItemSelected ? IconButton(onPressed: () {}, icon: Icon(Icons.edit)) : Container(),
+          isItemSelected ? IconButton(onPressed: () {}, icon: Icon(Icons.camera_alt)) : Container(),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot<Toy>>(
         stream: ToyService(uid: user!.uid).getToyCollectionStream(),
@@ -47,7 +54,14 @@ class _ToyCollectionState extends State<ToyCollection> {
                 Toy toy = data.docs[index].data();
 
                 return GestureDetector(
-                  onTap: () => launchScreen(context, ToyDetails.tag, arguments: toy),
+                  onTap: () {
+                    if (index != selectedItem) setState(() => isItemSelected = false);
+                    launchScreen(context, ToyDetails.tag, arguments: toy);
+                  },
+                  onLongPress: () => setState(() {
+                    isItemSelected = true;
+                    selectedItem = index;
+                  }),
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
                     child: Card(
@@ -55,7 +69,10 @@ class _ToyCollectionState extends State<ToyCollection> {
                       child: Container(
                         height: 100,
                         padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          border: isItemSelected && selectedItem == index ? Border.all(color: Theme.of(context).colorScheme.secondary) : null,
+                        ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
