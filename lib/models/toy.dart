@@ -7,11 +7,21 @@ class Toy {
   final String modelName;
   final String? modelNumber;
   final String? castingNumber;
-  final double? price;
+  final String price;
   final String? description;
   final List images;
 
-  Toy({required this.brand, this.type, required this.year, required this.modelName, this.modelNumber, this.castingNumber, this.price, this.description, required this.images});
+  Toy({
+    required this.brand,
+    this.type,
+    required this.year,
+    required this.modelName,
+    this.modelNumber,
+    this.castingNumber,
+    required this.price,
+    this.description,
+    required this.images,
+  });
 
   factory Toy.fromJson(Map<String, dynamic> json) => Toy(
         brand: json["brand"],
