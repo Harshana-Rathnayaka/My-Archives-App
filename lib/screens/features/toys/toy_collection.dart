@@ -1,9 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../../constants/colors.dart';
 import '../../../constants/fonts.dart';
 import '../../../models/toy.dart';
 import '../../../services/toy_service.dart';
@@ -15,7 +13,6 @@ import 'toy_details.dart';
 
 class ToyCollection extends StatefulWidget {
   static var tag = "/ToyCollection";
-
   const ToyCollection({Key? key}) : super(key: key);
 
   @override
@@ -65,22 +62,7 @@ class _ToyCollectionState extends State<ToyCollection> {
                           children: [
                             Row(
                               children: [
-                                Hero(
-                                  tag: toy.images[0],
-                                  child: CachedNetworkImage(
-                                    width: 60,
-                                    height: 50,
-                                    imageUrl: toy.images[0],
-                                    placeholder: (context, url) => new Center(child: CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) => new Icon(Icons.error, size: 26, color: colorRed),
-                                    imageBuilder: (context, imageProvider) => Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(6),
-                                          boxShadow: [BoxShadow(color: Theme.of(context).shadowColor.withOpacity(0.5), offset: Offset(1.0, 2.0), blurRadius: 3.0)],
-                                          image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
-                                    ),
-                                  ),
-                                ),
+                                Hero(tag: toy.images[0], child: ImageWidget(imageUrl: toy.images[0])),
                                 SizedBox(width: 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +7,7 @@ import '../../../constants/fonts.dart';
 import '../../../models/toy.dart';
 import '../../../utils/helper_methods.dart';
 import '../../../widgets/gallery_view.dart';
+import '../../../widgets/helper_widgets.dart';
 import 'components/description_section.dart';
 import 'components/edit_button.dart';
 import 'components/toy_details_table.dart';
@@ -40,18 +40,7 @@ class _ToyDetailsState extends State<ToyDetails> {
                 child: SizedBox(
                   width: size.width,
                   height: size.width,
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Hero(
-                      tag: toy.images[selectedImage],
-                      child: CachedNetworkImage(
-                        imageUrl: toy.images[selectedImage],
-                        placeholder: (context, url) => new Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => new Icon(Icons.error, size: 26, color: colorRed),
-                        imageBuilder: (context, imageProvider) => Container(decoration: BoxDecoration(image: DecorationImage(image: imageProvider, fit: BoxFit.cover))),
-                      ),
-                    ),
-                  ),
+                  child: AspectRatio(aspectRatio: 1, child: Hero(tag: toy.images[selectedImage], child: ImageWidget(imageUrl: toy.images[selectedImage], noDecoration: true))),
                 ),
               ),
               Positioned(
@@ -100,20 +89,11 @@ class _ToyDetailsState extends State<ToyDetails> {
     return GestureDetector(
       onTap: () => setState(() => selectedImage = index),
       child: Container(
-        width: 48,
-        height: 48,
+        child: ImageWidget(imageUrl: images[index]),
         margin: const EdgeInsets.only(right: 15, top: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: selectedImage == index ? Theme.of(context).colorScheme.secondary : Colors.transparent),
-        ),
-        child: CachedNetworkImage(
-          imageUrl: images[index],
-          placeholder: (context, url) => new Center(child: CircularProgressIndicator()),
-          errorWidget: (context, url, error) => new Icon(Icons.error, color: colorRed),
-          imageBuilder: (context, imageProvider) => Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
-          ),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(width: 2, color: selectedImage == index ? Theme.of(context).colorScheme.secondary : Colors.transparent),
         ),
       ),
     );
