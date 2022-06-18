@@ -8,6 +8,7 @@ import 'screens/login.dart';
 import 'screens/watched_movies.dart';
 import 'screens/watched_tv_series.dart';
 import 'screens/watchlist.dart';
+import 'widgets/gallery_view.dart';
 
 final Map<String, WidgetBuilder> routes = {
   Login.tag: (BuildContext context) => Login(),
@@ -18,4 +19,5 @@ final Map<String, WidgetBuilder> routes = {
   ToyCollection.tag: (BuildContext context) => ToyCollection(),
   AddNewToy.tag: (BuildContext context) => AddNewToy(),
   ToyDetails.tag: (BuildContext context) => ToyDetails(),
+  GalleryView.tag: (BuildContext context) => GalleryView(),
 };
