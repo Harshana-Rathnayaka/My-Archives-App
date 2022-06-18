@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../../../components/connectivity_status.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/fonts.dart';
+import '../../../models/toy.dart';
 import '../../../services/toy_service.dart';
 import '../../../utils/helper_methods.dart';
 import '../../../widgets/custom_button.dart';
@@ -251,7 +252,7 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                                     });
 
                                     uploadImages().then((value) {
-                                      Map<String, dynamic> toyData = {
+                                      Toy toy = Toy.fromJson({
                                         'brand': selectedBrand,
                                         'type': selectedType,
                                         'year': _year.text,
@@ -261,9 +262,9 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                                         'price': _price.numberValue,
                                         'description': _description.text.isEmpty ? null : _description.text,
                                         'images': downloadUrls
-                                      };
+                                      });
 
-                                      ToyService(uid: user!.uid).addToy(toyDetails: toyData).then((value) {
+                                      ToyService(uid: user!.uid).addToy(toyDetails: toy).then((value) {
                                         showToast(msg: 'Record added successfully', backGroundColor: colorGreen);
                                         clear();
                                       }).onError((error, stackTrace) {
