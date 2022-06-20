@@ -41,7 +41,7 @@ class ToyDetailsTable extends StatelessWidget {
         ]),
         TableRow(children: [
           Text('Description', style: TextStyle(fontFamily: fontMedium)),
-          Text(': ${toy.description}', style: TextStyle(fontFamily: fontSemiBold)),
+          Text(toy.description != null ? ': ${toy.description}' : ': N/A', style: TextStyle(fontFamily: fontSemiBold)),
         ]),
       ],
     );
