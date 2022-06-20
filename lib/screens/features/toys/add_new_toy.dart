@@ -225,7 +225,7 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                       validation: (String? val) => val!.isEmpty ? 'Casting number is required' : null,
                     ),
                   ),
-                  CustomTextField(controller: _price, hint: 'Price', validation: (String? val) => val!.isEmpty ? 'Price is required' : null, isNumber: true),
+                  CustomTextField(controller: _price, hint: 'Price', validation: (String? val) => _price.numberValue == 0.0 ? 'Price is required' : null, isNumber: true),
                   CustomTextField(controller: _description, hint: 'Description', textCapitalization: TextCapitalization.sentences, validation: (String? val) => null, maxLines: 3),
                   Row(
                     children: [
