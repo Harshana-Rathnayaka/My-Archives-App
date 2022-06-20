@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../../components/enums.dart';
 import '../../../constants/fonts.dart';
 import '../../../models/toy.dart';
 import '../../../services/toy_service.dart';
@@ -25,6 +26,7 @@ class _ToyCollectionState extends State<ToyCollection> {
   List<Toy> toys = [];
   bool isItemSelected = false;
   int selectedItemIndex = 0;
+  SortBy? _sortBy = SortBy.Name;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class _ToyCollectionState extends State<ToyCollection> {
           isItemSelected ? IconButton(onPressed: () {}, icon: Icon(Icons.delete)) : Container(),
           isItemSelected ? IconButton(onPressed: () {}, icon: Icon(Icons.edit)) : Container(),
           isItemSelected ? IconButton(onPressed: () {}, icon: Icon(Icons.camera_alt)) : Container(),
+          !isItemSelected ? IconButton(icon: Icon(Icons.sort), onPressed: () => showSortDialog(context).then((val) => setState(() {}))) : Container(),
           !isItemSelected ? IconButton(icon: Icon(Icons.search), onPressed: () => showSearch(context: context, delegate: ToySearch(itemList: toys))) : Container(),
         ],
       ),
@@ -50,13 +53,19 @@ class _ToyCollectionState extends State<ToyCollection> {
 
           final data = snapshot.requireData;
 
+          for (int i = 0; i < data.size; i++) {
+            Toy oneToy = data.docs[i].data();
+            if (toys.length != data.size) toys.add(oneToy); // list for searching
+          }
+
+          sortToys();
+
           return ListView.builder(
-              itemCount: data.size,
+              itemCount: toys.length,
               physics: BouncingScrollPhysics(),
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
               itemBuilder: (context, index) {
-                Toy toy = data.docs[index].data();
-                if (toys.length != data.size) toys.add(toy); // list for searching
+                Toy toy = toys[index];
 
                 return GestureDetector(
                   onTap: () {
@@ -127,5 +136,60 @@ class _ToyCollectionState extends State<ToyCollection> {
         onPressed: () => launchScreen(context, AddNewToy.tag),
       ),
     );
+  }
+
+  // sorting options dialog
+  showSortDialog(context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: Text('Sort by', style: TextStyle(fontFamily: fontMedium, fontSize: textSizeLargeMedium)),
+            content: Container(
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ...List.generate(SortBy.values.length, (index) => buildSortOptions(index, setState)),
+                ],
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  // radio button group
+  ListTile buildSortOptions(int index, Function setState) {
+    return ListTile(
+      contentPadding: const EdgeInsets.all(0),
+      horizontalTitleGap: 6,
+      minVerticalPadding: 0,
+      minLeadingWidth: 0,
+      visualDensity: VisualDensity(vertical: -3, horizontal: -2),
+      title: Text(enumToString(SortBy.values[index]), style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold)),
+      leading: Radio<SortBy>(
+        value: SortBy.values[index],
+        groupValue: _sortBy,
+        onChanged: (SortBy? value) => setState(() => _sortBy = value),
+        visualDensity: VisualDensity(horizontal: -4),
+        activeColor: Theme.of(context).colorScheme.secondary,
+      ),
+    );
+  }
+
+  List<Toy> sortToys() {
+    if (_sortBy == SortBy.Name) {
+      toys.sort((a, b) => a.modelName.compareTo(b.modelName));
+    } else if (_sortBy == SortBy.Brand) {
+      toys.sort((a, b) => a.brand.compareTo(b.brand));
+    } else if (_sortBy == SortBy.Year) {
+      toys.sort((a, b) => a.year.compareTo(b.year));
+    }
+
+    return toys;
   }
 }
