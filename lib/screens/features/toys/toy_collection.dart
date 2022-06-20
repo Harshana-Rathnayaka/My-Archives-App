@@ -3,10 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../components/enums.dart';
+import '../../../constants/colors.dart';
 import '../../../constants/fonts.dart';
 import '../../../models/toy.dart';
 import '../../../services/toy_service.dart';
 import '../../../utils/helper_methods.dart';
+import '../../../widgets/custom_delete_dialog.dart';
 import '../../../widgets/helper_widgets.dart';
 import 'add_new_toy.dart';
 import 'toy_details.dart';
@@ -23,10 +25,13 @@ class ToyCollection extends StatefulWidget {
 class _ToyCollectionState extends State<ToyCollection> {
   final user = FirebaseAuth.instance.currentUser;
   late Size size;
+
   List<Toy> toys = [];
+  SortBy? _sortBy = SortBy.Name;
+
   bool isItemSelected = false;
   int selectedItemIndex = 0;
-  SortBy? _sortBy = SortBy.Name;
+  Toy? selectedToy;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +43,7 @@ class _ToyCollectionState extends State<ToyCollection> {
         leading: IconButton(onPressed: () => isItemSelected ? setState(() => isItemSelected = false) : finish(context), icon: Icon(Icons.arrow_back)),
         centerTitle: true,
         actions: [
-          isItemSelected ? IconButton(onPressed: () {}, icon: Icon(Icons.delete)) : Container(),
+          isItemSelected ? IconButton(onPressed: () => showDeleteDialog(context, selectedToy!), icon: Icon(Icons.delete)) : Container(),
           isItemSelected ? IconButton(onPressed: () {}, icon: Icon(Icons.edit)) : Container(),
           isItemSelected ? IconButton(onPressed: () {}, icon: Icon(Icons.camera_alt)) : Container(),
           !isItemSelected ? IconButton(icon: Icon(Icons.sort), onPressed: () => showSortDialog(context).then((val) => setState(() {}))) : Container(),
@@ -52,10 +57,11 @@ class _ToyCollectionState extends State<ToyCollection> {
           if (snapshot.hasError) return Center(child: Text('Something went wrong. \n Error - ${snapshot.error}', style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold)));
 
           final data = snapshot.requireData;
+          toys.clear(); // for when coming back after adding a new toy
 
           for (int i = 0; i < data.size; i++) {
-            Toy oneToy = data.docs[i].data();
-            if (toys.length != data.size) toys.add(oneToy); // list for searching
+            Toy oneToy = data.docs[i].data().copyWith(documentId: data.docs[i].id);
+            if (toys.length != data.size) toys.add(oneToy);
           }
 
           sortToys();
@@ -72,10 +78,13 @@ class _ToyCollectionState extends State<ToyCollection> {
                     if (index != selectedItemIndex) setState(() => isItemSelected = false);
                     launchScreen(context, ToyDetails.tag, arguments: toy);
                   },
-                  onLongPress: () => setState(() {
-                    isItemSelected = true;
-                    selectedItemIndex = index;
-                  }),
+                  onLongPress: () {
+                    setState(() {
+                      isItemSelected = true;
+                      selectedItemIndex = index;
+                      selectedToy = toy;
+                    });
+                  },
                   child: Card(
                     elevation: 10,
                     margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
@@ -191,5 +200,28 @@ class _ToyCollectionState extends State<ToyCollection> {
     }
 
     return toys;
+  }
+
+  // toy delete dialog
+  showDeleteDialog(context, Toy toy) {
+    return showDialog(
+      context: context,
+      builder: (context) => CustomDeleteDialog(
+        item: toy.modelName,
+        onPressed: () async {
+          ToyService(uid: user!.uid).deleteToy(toy: toy).then((value) {
+            showToast(msg: '${toy.modelName} by ${toy.brand} deleted successfully!', backGroundColor: colorGreen);
+          }).onError((dynamic error, stackTrace) {
+            showToast(msg: 'Something went wrong! \n Error - $error', backGroundColor: colorRed);
+          });
+          finish(context);
+          toys.clear();
+          setState(() {
+            selectedItemIndex = 0;
+            isItemSelected = false;
+          });
+        },
+      ),
+    );
   }
 }

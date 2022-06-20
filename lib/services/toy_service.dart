@@ -4,6 +4,7 @@ import '../models/toy.dart';
 
 class ToyService {
   final String uid;
+  // final FirebaseStorage _firebaseStorage = FirebaseStorage.instance();
   final CollectionReference toysReference = FirebaseFirestore.instance.collection('toys');
   late CollectionReference toyCollectionReference = toysReference.doc(uid).collection('toyCollection').withConverter<Toy>(
         fromFirestore: (snapshots, _) => Toy.fromJson(snapshots.data()!),
@@ -20,4 +21,7 @@ class ToyService {
     String uniqueId = DateTime.now().microsecondsSinceEpoch.toString();
     await toyCollectionReference.doc(uniqueId).set(toyDetails);
   }
+
+  // deleting a movie
+  Future deleteToy({required Toy toy}) async => await toyCollectionReference.doc(toy.documentId).delete();
 }
