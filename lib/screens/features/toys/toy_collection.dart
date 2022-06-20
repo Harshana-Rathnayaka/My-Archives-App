@@ -7,9 +7,9 @@ import '../../../models/toy.dart';
 import '../../../services/toy_service.dart';
 import '../../../utils/helper_methods.dart';
 import '../../../widgets/helper_widgets.dart';
-import '../../../widgets/search.dart';
 import 'add_new_toy.dart';
 import 'toy_details.dart';
+import 'toy_search.dart';
 
 class ToyCollection extends StatefulWidget {
   static var tag = "/ToyCollection";
@@ -20,22 +20,26 @@ class ToyCollection extends StatefulWidget {
 }
 
 class _ToyCollectionState extends State<ToyCollection> {
-  List toys = [];
   final user = FirebaseAuth.instance.currentUser;
+  late Size size;
+  List<Toy> toys = [];
   bool isItemSelected = false;
-  late int selectedItem;
+  int selectedItemIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         title: isItemSelected ? null : AppBarTitle(title: 'Toy Collection'),
         leading: IconButton(onPressed: () => isItemSelected ? setState(() => isItemSelected = false) : finish(context), icon: Icon(Icons.arrow_back)),
         centerTitle: true,
         actions: [
-          IconButton(icon: Icon(isItemSelected ? Icons.delete : Icons.search), onPressed: () => showSearch(context: context, delegate: Search(itemList: toys))),
+          isItemSelected ? IconButton(onPressed: () {}, icon: Icon(Icons.delete)) : Container(),
           isItemSelected ? IconButton(onPressed: () {}, icon: Icon(Icons.edit)) : Container(),
           isItemSelected ? IconButton(onPressed: () {}, icon: Icon(Icons.camera_alt)) : Container(),
+          !isItemSelected ? IconButton(icon: Icon(Icons.search), onPressed: () => showSearch(context: context, delegate: ToySearch(itemList: toys))) : Container(),
         ],
       ),
       body: StreamBuilder<QuerySnapshot<Toy>>(
@@ -52,61 +56,63 @@ class _ToyCollectionState extends State<ToyCollection> {
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
               itemBuilder: (context, index) {
                 Toy toy = data.docs[index].data();
+                if (toys.length != data.size) toys.add(toy); // list for searching
 
                 return GestureDetector(
                   onTap: () {
-                    if (index != selectedItem) setState(() => isItemSelected = false);
+                    if (index != selectedItemIndex) setState(() => isItemSelected = false);
                     launchScreen(context, ToyDetails.tag, arguments: toy);
                   },
                   onLongPress: () => setState(() {
                     isItemSelected = true;
-                    selectedItem = index;
+                    selectedItemIndex = index;
                   }),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Card(
-                      elevation: 10,
-                      child: Container(
-                        height: 100,
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          border: isItemSelected && selectedItem == index ? Border.all(color: Theme.of(context).colorScheme.secondary) : null,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Hero(tag: toy.images[0], child: ImageWidget(imageUrl: toy.images[0])),
-                                SizedBox(width: 10),
-                                Column(
+                  child: Card(
+                    elevation: 10,
+                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      side: BorderSide(color: isItemSelected && selectedItemIndex == index ? Theme.of(context).colorScheme.secondary : Colors.transparent),
+                    ),
+                    child: Container(
+                      height: 100,
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Hero(tag: toy.images[0], child: ImageWidget(imageUrl: toy.images[0])),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(toy.modelName, style: TextStyle(fontFamily: fontMedium, fontWeight: FontWeight.bold, fontSize: textSizeSMedium)),
-                                    Text('${toy.year} ${toy.brand} ${toy.type ?? ''}', style: TextStyle(fontFamily: fontRegular, fontSize: textSizeSmall)),
+                                    Text(toy.modelName, overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontFamily: fontMedium, fontWeight: FontWeight.bold, fontSize: textSizeSMedium)),
+                                    Text('${toy.year} ${toy.brand} ${toy.type ?? ''}',
+                                        overflow: TextOverflow.ellipsis, maxLines: 2, style: TextStyle(fontFamily: fontRegular, fontSize: textSizeSmall)),
                                   ],
                                 ),
-                              ],
-                            ),
-                            Spacer(),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Visibility(
-                                  visible: toy.modelNumber != null,
-                                  child: Text(toy.modelNumber ?? '', style: TextStyle(fontFamily: fontBold, fontSize: textSizeExtraSmall)),
-                                ),
-                                Visibility(
-                                  visible: toy.castingNumber != null,
-                                  child: Text(toy.castingNumber ?? '', style: TextStyle(fontFamily: fontBold, fontSize: textSizeExtraSmall)),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                          Spacer(),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Visibility(
+                                visible: toy.modelNumber != null,
+                                child: Text(toy.modelNumber ?? '', style: TextStyle(fontFamily: fontBold, fontSize: textSizeExtraSmall)),
+                              ),
+                              Visibility(
+                                visible: toy.castingNumber != null,
+                                child: Text(toy.castingNumber ?? '', style: TextStyle(fontFamily: fontBold, fontSize: textSizeExtraSmall)),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
