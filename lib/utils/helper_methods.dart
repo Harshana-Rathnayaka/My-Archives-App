@@ -47,3 +47,6 @@ void showToast({required String msg, required Color backGroundColor}) => Flutter
     );
 
 NumberFormat numberFormat = NumberFormat('###,###.##');
+
+// function to get the value from enum
+String enumToString(Object object) => object.toString().split('.').last;
