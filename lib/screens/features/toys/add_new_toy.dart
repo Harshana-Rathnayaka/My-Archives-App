@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as Path;
 import 'package:provider/provider.dart';
 
-import '../../../components/connectivity_status.dart';
+import '../../../components/enums.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/fonts.dart';
 import '../../../models/toy.dart';

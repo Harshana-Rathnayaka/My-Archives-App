@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
-import 'package:my_archive/components/connectivity_status.dart';
+
+import '../components/enums.dart';
 
 class ConnectivityService {
   StreamController<ConnectivityStatus> connectionStatusController = StreamController<ConnectivityStatus>();

@@ -61,7 +61,13 @@ class ToySearch extends SearchDelegate {
                       style: DefaultTextStyle.of(context).style.copyWith(fontFamily: fontMedium, fontWeight: FontWeight.bold),
                       children: [TextSpan(text: remainingText, style: DefaultTextStyle.of(context).style.copyWith(fontFamily: fontMedium))]),
                 ),
-                subtitle: Text(suggestion.year, style: TextStyle(fontFamily: fontRegular)),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('${suggestion.brand} ${suggestion.type ?? ''}', style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold, fontSize: textSizeSmall)),
+                    Text(suggestion.year, style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold, fontSize: textSizeSmall)),
+                  ],
+                ),
               );
             })
         : CustomNoRecords(text: 'No records found');

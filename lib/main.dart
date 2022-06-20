@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'components/connectivity_status.dart';
+import 'components/enums.dart';
 import 'components/theme.dart';
 import 'providers/google_signin_provider.dart';
 import 'routes.dart';

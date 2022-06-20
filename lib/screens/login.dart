@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-import '../components/connectivity_status.dart';
+import '../components/enums.dart';
 import '../constants/colors.dart';
 import '../constants/fonts.dart';
 import '../constants/images.dart';
