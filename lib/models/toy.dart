@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 class Toy {
+  final String? documentId;
   final String brand;
   final String? type;
   final String year;
@@ -12,6 +13,7 @@ class Toy {
   final List images;
 
   Toy({
+    this.documentId,
     required this.brand,
     this.type,
     required this.year,
@@ -24,6 +26,7 @@ class Toy {
   });
 
   factory Toy.fromJson(Map<String, dynamic> json) => Toy(
+        documentId: json['documentId'],
         brand: json["brand"],
         type: json["type"],
         year: json["year"],
@@ -36,6 +39,7 @@ class Toy {
       );
 
   Map<String, dynamic> toJson() => {
+        "documentId": documentId,
         "brand": brand,
         "type": type,
         "year": year,
@@ -46,6 +50,19 @@ class Toy {
         "description": description,
         "images": images,
       };
+
+  Toy copyWith({required final String documentId}) => Toy(
+        documentId: documentId,
+        brand: brand,
+        type: type ?? this.type,
+        year: this.year,
+        modelName: this.modelName,
+        modelNumber: modelNumber ?? this.modelNumber,
+        castingNumber: castingNumber ?? this.castingNumber,
+        price: this.price,
+        description: description ?? this.description,
+        images: this.images,
+      );
 
   Toy toyFromJson(String str) => Toy.fromJson(jsonDecode(str));
   String toyToJson(Toy data) => jsonEncode(data.toJson());
