@@ -49,11 +49,8 @@ class _ToyDetailsState extends State<ToyDetails> {
           DescriptionSection(
             children: [
               EditButton(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text(toy.modelName, style: Theme.of(context).textTheme.headline6!.copyWith(fontFamily: fontSemiBold)),
-              ),
-              Padding(padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20), child: ToyDetailsTable(toy: toy))
+              Padding(padding: const EdgeInsets.fromLTRB(20, 10, 20, 0), child: Text(toy.modelName, style: Theme.of(context).textTheme.headline6!.copyWith(fontFamily: fontSemiBold))),
+              Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0), child: SingleChildScrollView(child: ToyDetailsTable(toy: toy))))
             ],
           ),
         ],

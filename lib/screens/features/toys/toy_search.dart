@@ -4,6 +4,7 @@ import '../../../components/enums.dart';
 import '../../../constants/fonts.dart';
 import '../../../utils/helper_methods.dart';
 import '../../../widgets/custom_no_records.dart';
+import 'toy_details.dart';
 
 class ToySearch extends SearchDelegate {
   final List itemList;
@@ -77,6 +78,11 @@ class ToySearch extends SearchDelegate {
               }
 
               return ListTile(
+                onTap: () async {
+                  await Future.delayed(Duration.zero, (() => hideKeyboard(context)));
+                  close(context, suggestion);
+                  launchScreen(context, ToyDetails.tag, arguments: suggestion);
+                },
                 title: RichText(
                   text: TextSpan(
                       text: searchBy == SortBy.Name ? queryText : suggestion.modelName,
