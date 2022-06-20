@@ -261,7 +261,7 @@ class _AddNewToyState extends State<AddNewToy> with SingleTickerProviderStateMix
                                         'modelName': _modelName.text,
                                         'modelNumber': _modelNumber.text.isEmpty ? null : _modelNumber.text,
                                         'castingNumber': _castingNumber.text.isEmpty ? null : _castingNumber.text,
-                                        'price': _price.numberValue,
+                                        'price': _price.numberValue.toString(),
                                         'description': _description.text.isEmpty ? null : _description.text,
                                         'images': downloadUrls
                                       });
