@@ -9,6 +9,7 @@ import '../../../models/toy.dart';
 import '../../../services/toy_service.dart';
 import '../../../utils/helper_methods.dart';
 import '../../../widgets/custom_delete_dialog.dart';
+import '../../../widgets/custom_no_records.dart';
 import '../../../widgets/helper_widgets.dart';
 import 'add_new_toy.dart';
 import 'toy_details.dart';
@@ -55,6 +56,7 @@ class _ToyCollectionState extends State<ToyCollection> {
         builder: (context, AsyncSnapshot<QuerySnapshot<Toy>> snapshot) {
           if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
           if (snapshot.hasError) return Center(child: Text('Something went wrong. \n Error - ${snapshot.error}', style: TextStyle(fontFamily: fontRegular, fontWeight: FontWeight.bold)));
+          if (snapshot.hasData && snapshot.requireData.size <= 0) return CustomNoRecords(text: 'No records found');
 
           final data = snapshot.requireData;
           toys.clear(); // for when coming back after adding a new toy
