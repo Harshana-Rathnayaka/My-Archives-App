@@ -62,7 +62,7 @@ class _ToyCollectionState extends State<ToyCollection> {
           toys.clear(); // for when coming back after adding a new toy
 
           for (int i = 0; i < data.size; i++) {
-            Toy oneToy = data.docs[i].data().copyWith(documentId: data.docs[i].id);
+            Toy oneToy = data.docs[i].data();
             if (toys.length != data.size) toys.add(oneToy);
           }
 

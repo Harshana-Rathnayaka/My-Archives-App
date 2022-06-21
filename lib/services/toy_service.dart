@@ -19,7 +19,7 @@ class ToyService {
   // add to toys collection
   Future addToy({required Toy toyDetails}) async {
     String uniqueId = DateTime.now().microsecondsSinceEpoch.toString();
-    await toyCollectionReference.doc(uniqueId).set(toyDetails);
+    await toyCollectionReference.doc(uniqueId).set(toyDetails.copyWith(documentId: uniqueId));
   }
 
   // deleting a toy
