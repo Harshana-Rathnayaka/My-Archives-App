@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import '../models/toy.dart';
 
 class ToyService {
   final String uid;
-  // final FirebaseStorage _firebaseStorage = FirebaseStorage.instance();
   final CollectionReference toysReference = FirebaseFirestore.instance.collection('toys');
   late CollectionReference toyCollectionReference = toysReference.doc(uid).collection('toyCollection').withConverter<Toy>(
         fromFirestore: (snapshots, _) => Toy.fromJson(snapshots.data()!),
@@ -22,6 +22,9 @@ class ToyService {
     await toyCollectionReference.doc(uniqueId).set(toyDetails);
   }
 
-  // deleting a movie
-  Future deleteToy({required Toy toy}) async => await toyCollectionReference.doc(toy.documentId).delete();
+  // deleting a toy
+  Future deleteToy({required Toy toy}) async {
+    toy.images.forEach((element) async => await FirebaseStorage.instance.refFromURL(element).delete());
+    await toyCollectionReference.doc(toy.documentId).delete();
+  }
 }
